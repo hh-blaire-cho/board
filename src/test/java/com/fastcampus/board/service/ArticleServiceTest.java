@@ -45,7 +45,7 @@ class ArticleServiceTest {
         userAccount = userAccountDto.toEntity();
     }
 
-    @DisplayName("게시글 아이디 조회 시, 해당 게시글 반환")
+    @DisplayName("아이디로 게시글 검색 시, 해당 게시글 반환")
     @Test
     void test_getArticlesUsingArticleId() {
         // Given articleId
@@ -93,10 +93,10 @@ class ArticleServiceTest {
         then(articleRepo).should().save(any(Article.class));
     }
 
-    @DisplayName("게시글 아이디와 바뀐 정보 입력 시 수정")
+    @DisplayName("게시글 바뀐 정보 입력 시 수정")
     @Test
     void test_updatingArticle() {
-        // Given article id and updated info
+        // Given updated info with original
         Article original = createArticle("title", "content", "#tag");
         ArticleDto updated = createArticleDto("newtitle", "newcontent", "#newtag");
         given(articleRepo.getReferenceById(updated.id())).willReturn(original);
