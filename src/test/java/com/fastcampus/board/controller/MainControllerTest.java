@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-@DisplayName("루트 페이지 리다이렉션 테스트")
+@DisplayName("메인 페이지 리다이렉션")
 @Import(SecurityConfig.class)
 @WebMvcTest(MainController.class)
 class MainControllerTest {
@@ -26,7 +26,7 @@ class MainControllerTest {
     }
 
     @Test
-    void test_ArticlesPageRedirection() throws Exception {
+    void test_forwardToArticlesPage() throws Exception {
         // Given nothing
         // When requesting root page
         // Then redirects to articles page

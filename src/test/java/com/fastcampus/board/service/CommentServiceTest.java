@@ -1,26 +1,26 @@
 package com.fastcampus.board.service;
 
-import com.fastcampus.board.domain.Article;
+import static com.fastcampus.board.TestHelper.ARTICLE;
+import static com.fastcampus.board.TestHelper.USER_ACCOUNT;
+import static com.fastcampus.board.TestHelper.createCommentDto;
+import static com.fastcampus.board.TestHelper.randNumb;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
+
 import com.fastcampus.board.domain.Comment;
-import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.dto.CommentDto;
-import com.fastcampus.board.dto.UserAccountDto;
 import com.fastcampus.board.repository.ArticleRepository;
 import com.fastcampus.board.repository.CommentRepository;
-import org.junit.jupiter.api.BeforeEach;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
 
 
 @DisplayName("비즈니스 로직 - 댓글")
@@ -35,29 +35,14 @@ class CommentServiceTest {
     @InjectMocks // Mock using Mock, CommentRepository 를 주입하는 대상, CommentService 에 의존함 (=사용당함)
     private CommentService sut; // System Under Test
 
-    private UserAccountDto userAccountDto;
-    private UserAccount userAccount;
-    private Article article;
 
-    @BeforeEach
-    public void setUp() { //픽스쳐를 만드는 과정
-        article = Article.of(userAccount, "title", "content", "#tag");
-
-        userAccountDto = UserAccountDto.of(
-                1L, "hcho", "qwerty", "hcho@mail.com", "winky", "This is memo",
-                LocalDateTime.now(), "hcho", LocalDateTime.now(), "hcho");
-
-        userAccount = userAccountDto.toEntity();
-    }
-
-
-    @DisplayName("게시글 아이디 조회 시, 해당 댓글 리스트 반환")
+    @DisplayName("게시글 아이디 조회 시, 딸린 댓글 리스트 반환")
     @Test
     void test_searchCommentsUsingArticleId() {
         // Given article Id
-        long articleId = createRandomId();
-        Comment expected1 = createComment("content1");
-        Comment expected2 = createComment("content2");
+        long articleId = randNumb();
+        Comment expected1 = Comment.of(ARTICLE, USER_ACCOUNT, "content1");
+        Comment expected2 = Comment.of(ARTICLE, USER_ACCOUNT, "content2");
         given(commentRepo.findByArticle_Id(articleId)).willReturn(List.of(expected1, expected2));
 
         // When search list of comments from that corresponding article
@@ -74,8 +59,8 @@ class CommentServiceTest {
     @Test
     void test_savingComment() {
         // Given comments info
-        CommentDto dto = createCommentDto("string");
-        given(articleRepo.getReferenceById(dto.articleId())).willReturn(article);
+        CommentDto dto = createCommentDto();
+        given(articleRepo.getReferenceById(dto.articleId())).willReturn(ARTICLE);
         given(commentRepo.save(any(Comment.class))).willReturn(null);
 
         // When try saving
@@ -86,12 +71,12 @@ class CommentServiceTest {
         then(commentRepo).should().save(any(Comment.class));
     }
 
-    @DisplayName("댓글 수정 정보 입력 시, 댓글 수정")
+    @DisplayName("바뀐 정보 입력 시, 댓글 수정")
     @Test
     void test_updatingComment() {
         // Given original entity and updated dto
-        Comment original = createComment("old-string");
-        CommentDto updated = createCommentDto("new-string");
+        Comment original = Comment.of(ARTICLE, USER_ACCOUNT, "old-string");
+        CommentDto updated = createCommentDto();
         given(commentRepo.getReferenceById(updated.id())).willReturn(original);
 
         // When try updating
@@ -102,11 +87,11 @@ class CommentServiceTest {
         then(commentRepo).should().save(any(Comment.class));
     }
 
-    @DisplayName("댓글 아이디 입력하면 댓글 삭제")
+    @DisplayName("아이디로 댓글 삭제")
     @Test
     void test_deletingComment() {
         // Given Comment Id
-        long commentId = createRandomId();
+        long commentId = randNumb();
         willDoNothing().given(commentRepo).deleteById(commentId);
 
         // When try deleting using that id
@@ -114,19 +99,6 @@ class CommentServiceTest {
 
         // Then deletes that properly
         then(commentRepo).should().deleteById(commentId);
-    }
-
-    private CommentDto createCommentDto(String content) {
-        return CommentDto.of(createRandomId(), createRandomId(), userAccountDto, content,
-                LocalDateTime.now(), "hcho", LocalDateTime.now(), "hcho");
-    }
-
-    private Comment createComment(String content) {
-        return Comment.of(article, userAccount, content);
-    }
-
-    private long createRandomId() {
-        return (long) (Math.random() * 99);
     }
 
 }
