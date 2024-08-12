@@ -10,6 +10,8 @@ import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.util.List;
+
 @RepositoryRestResource
 public interface CommentRepository extends
     JpaRepository<Comment, Long>,
@@ -25,4 +27,7 @@ public interface CommentRepository extends
         bindings.bind(root.createdAt).first(DateTimeExpression::eq);
         bindings.bind(root.createdBy).first(StringExpression::containsIgnoreCase);
     }
+
+    List<Comment> findByArticle_Id(Long articleId);
+    
 }
