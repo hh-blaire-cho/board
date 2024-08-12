@@ -27,7 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-@DisplayName("비지니스 로직 - 게시글")
+@DisplayName("비즈니스 로직 - 게시글")
 @ExtendWith(MockitoExtension.class) //이렇게 해야, 굳이 Application 을 안켜서 가벼워짐.
 class ArticleServiceTest {
 
@@ -72,7 +72,7 @@ class ArticleServiceTest {
         assertThat(t).hasMessage("Cannot find that article with given id : " + articleId);
     }
 
-    @DisplayName("파라미터로 게시글 검색 시 관련 게시글들 반환")
+    @DisplayName("파라미터로 게시글 검색 시, 관련 게시글들 반환")
     @Test
     void test_searchArticlesUsingParameters() {
         // Given search parameters
@@ -103,7 +103,7 @@ class ArticleServiceTest {
         then(articleRepo).should().save(any(Article.class));
     }
 
-    @DisplayName("게시글 바뀐 정보 입력 시 수정")
+    @DisplayName("바뀐 정보 입력 시 게시글 수정")
     @Test
     void test_updatingArticle() {
         // Given updated info with original
@@ -123,7 +123,7 @@ class ArticleServiceTest {
         then(articleRepo).should().save(any(Article.class));
     }
 
-    @DisplayName("없는 게시글을 수정 시도 시, 경고 로그만 찍고 끝")
+    @DisplayName("없는 게시글 수정 시도 시, 경고 로그만 찍고 끝")
     @Test
     void test_updatingNonExistedArticle() {
         // Given updated info without original
@@ -137,7 +137,7 @@ class ArticleServiceTest {
         then(articleRepo).should().getReferenceById(updated.id());
     }
 
-    @DisplayName("게시글 아이디 입력하면 게시글 삭제")
+    @DisplayName("아이디로 게시글 삭제")
     @Test
     void test_deletingArticle() {
         // Given article id

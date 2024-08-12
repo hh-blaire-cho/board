@@ -36,7 +36,7 @@ class CommentServiceTest {
     private CommentService sut; // System Under Test
 
 
-    @DisplayName("게시글 아이디 조회 시, 해당 댓글 리스트 반환")
+    @DisplayName("게시글 아이디 조회 시, 딸린 댓글 리스트 반환")
     @Test
     void test_searchCommentsUsingArticleId() {
         // Given article Id
@@ -71,7 +71,7 @@ class CommentServiceTest {
         then(commentRepo).should().save(any(Comment.class));
     }
 
-    @DisplayName("댓글 수정 정보 입력 시, 댓글 수정")
+    @DisplayName("바뀐 정보 입력 시, 댓글 수정")
     @Test
     void test_updatingComment() {
         // Given original entity and updated dto
@@ -87,7 +87,7 @@ class CommentServiceTest {
         then(commentRepo).should().save(any(Comment.class));
     }
 
-    @DisplayName("댓글 아이디 입력하면 댓글 삭제")
+    @DisplayName("아이디로 댓글 삭제")
     @Test
     void test_deletingComment() {
         // Given Comment Id
