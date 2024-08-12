@@ -17,12 +17,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
-@DisplayName("비지니스 로직 - 게시판")
+@DisplayName("비지니스 로직 - 게시글")
 @ExtendWith(MockitoExtension.class) //이렇게 해야, 굳이 Application 을 안켜서 가벼워짐.
 class ArticleServiceTest {
 
@@ -38,7 +39,7 @@ class ArticleServiceTest {
     @BeforeEach
     public void setUp() { //픽스쳐를 만드는 과정
         userAccountDto = UserAccountDto.of(
-                1L, "hcho", "password", "hcho@mail.com", "winkyhcho", "This is memo",
+                createRandomId(), "hcho", "password", "hcho@mail.com", "winkyhcho", "This is memo",
                 LocalDateTime.now(), "hcho", LocalDateTime.now(), "hcho");
 
         userAccount = userAccountDto.toEntity();
@@ -48,13 +49,20 @@ class ArticleServiceTest {
     @Test
     void test_getArticlesUsingArticleId() {
         // Given articleId
-        long articleId = 1L;
+        long articleId = createRandomId();
+        Article article = createArticle("random1", "random2", "random3");
+        given(articleRepo.findById(articleId)).willReturn(Optional.of(article));
 
         // When searching it
         ArticleWithCommentsDto articles = sut.getArticleByArticleId(articleId);
 
         // Then returns that specific article
         assertThat(articles).isNotNull();
+        assertThat(articles)
+                .hasFieldOrPropertyWithValue("title", "random1")
+                .hasFieldOrPropertyWithValue("content", "random2")
+                .hasFieldOrPropertyWithValue("hashtag", "random3");
+        then(articleRepo).should().findById(articleId);
     }
 
     @DisplayName("게시글 검색 시 관련 게시글들 반환")
@@ -85,7 +93,7 @@ class ArticleServiceTest {
         then(articleRepo).should().save(any(Article.class));
     }
 
-    @DisplayName("게시글 ID와 바뀐 정보 입력 시 수정")
+    @DisplayName("게시글 아이디와 바뀐 정보 입력 시 수정")
     @Test
     void test_updatingArticle() {
         // Given article id and updated info
@@ -97,6 +105,10 @@ class ArticleServiceTest {
         sut.updateArticle(updated);
 
         // Then should update it properly
+        assertThat(original)
+                .hasFieldOrPropertyWithValue("title", updated.title())
+                .hasFieldOrPropertyWithValue("content", updated.content())
+                .hasFieldOrPropertyWithValue("hashtag", updated.hashtag());
         then(articleRepo).should().getReferenceById(updated.id());
         then(articleRepo).should().save(any(Article.class));
     }
@@ -105,7 +117,7 @@ class ArticleServiceTest {
     @Test
     void test_deletingArticle() {
         // Given article id
-        long articleId = 1L;
+        long articleId = createRandomId();
         willDoNothing().given(articleRepo).deleteById(articleId);
 
         // When try deleting using that id
@@ -123,6 +135,10 @@ class ArticleServiceTest {
 
     private Article createArticle(String title, String content, String hashtag) {
         return Article.of(userAccount, title, content, hashtag);
+    }
+
+    private long createRandomId() {
+        return (long) (Math.random() * 99);
     }
 
 }

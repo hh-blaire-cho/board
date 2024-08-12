@@ -55,16 +55,19 @@ class CommentServiceTest {
     @Test
     void test_searchCommentsUsingArticleId() {
         // Given article Id
-        long articleId = 1L;
-        Comment expected = createComment("content");
-        given(commentRepo.findByArticle_Id(articleId)).willReturn(List.of(expected));
+        long articleId = createRandomId();
+        Comment expected1 = createComment("content1");
+        Comment expected2 = createComment("content2");
+        given(commentRepo.findByArticle_Id(articleId)).willReturn(List.of(expected1, expected2));
 
         // When search list of comments from that corresponding article
         List<CommentDto> actual = sut.searchComments(articleId);
 
         // Then returns that well
-        assertThat(actual).isNotNull();
-        then(articleRepo).should().findById(articleId);
+        assertThat(actual).hasSize(2);
+        assertThat(actual).first().hasFieldOrPropertyWithValue("content", "content1");
+        assertThat(actual).last().hasFieldOrPropertyWithValue("content", "content2");
+        then(commentRepo).should().findByArticle_Id(articleId);
     }
 
     @DisplayName("댓글 정보 입력 시, 댓글 저장")
@@ -103,7 +106,7 @@ class CommentServiceTest {
     @Test
     void test_deletingComment() {
         // Given Comment Id
-        long commentId = 1L;
+        long commentId = createRandomId();
         willDoNothing().given(commentRepo).deleteById(commentId);
 
         // When try deleting using that id
@@ -114,12 +117,16 @@ class CommentServiceTest {
     }
 
     private CommentDto createCommentDto(String content) {
-        return CommentDto.of(1L, 1L, userAccountDto, content,
+        return CommentDto.of(createRandomId(), createRandomId(), userAccountDto, content,
                 LocalDateTime.now(), "hcho", LocalDateTime.now(), "hcho");
     }
-
 
     private Comment createComment(String content) {
         return Comment.of(article, userAccount, content);
     }
+
+    private long createRandomId() {
+        return (long) (Math.random() * 99);
+    }
+
 }
