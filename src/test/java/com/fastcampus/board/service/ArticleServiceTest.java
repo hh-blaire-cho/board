@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -65,18 +66,21 @@ class ArticleServiceTest {
         then(articleRepo).should().findById(articleId);
     }
 
-    @DisplayName("게시글 검색 시 관련 게시글들 반환")
+    @DisplayName("파라미터로 게시글 검색 시 관련 게시글들 반환")
     @Test
     void test_searchArticlesUsingParameters() {
         // Given search parameters
         SearchType searchType = SearchType.TITLE;
         String searchKey = "search-keyword";
+        Pageable pageable = Pageable.ofSize(20);
+        given(articleRepo.findByTitleContaining(searchKey, pageable)).willReturn(Page.empty());
 
         // When searching it
-        Page<ArticleDto> articles = sut.searchArticles(searchType, searchKey, null);
+        Page<ArticleDto> articles = sut.searchArticles(searchType, searchKey, pageable);
 
         // Then returns matching articles
-        assertThat(articles).isNotNull();
+        assertThat(articles).isEmpty();
+        then(articleRepo).should().findByTitleContaining(searchKey, pageable);
     }
 
     @DisplayName("게시글 정보 입력 시, 게시글 저장")
