@@ -4,6 +4,8 @@ import com.fastcampus.board.domain.Article;
 import com.fastcampus.board.domain.QArticle;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.StringExpression;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
@@ -26,5 +28,15 @@ public interface ArticleRepository extends
         bindings.bind(root.createdAt).first(DateTimeExpression::eq);
         bindings.bind(root.createdBy).first(StringExpression::containsIgnoreCase);
     }
+
+    Page<Article> findByTitleContaining(String title, Pageable pageable);
+
+    Page<Article> findByContentContaining(String content, Pageable pageable);
+
+    Page<Article> findByUserAccount_UsernameContaining(String username, Pageable pageable);
+
+    Page<Article> findByUserAccount_NicknameContaining(String nickname, Pageable pageable);
+
+    Page<Article> findByHashtag(String hashtag, Pageable pageable); //해쉬태그의 경우 완전 일치 검색 필요
 
 }
