@@ -7,6 +7,7 @@ import com.fastcampus.board.dto.ArticleDto;
 import com.fastcampus.board.dto.ArticleWithCommentsDto;
 import com.fastcampus.board.dto.UserAccountDto;
 import com.fastcampus.board.repository.ArticleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
@@ -64,6 +66,21 @@ class ArticleServiceTest {
                 .hasFieldOrPropertyWithValue("content", "random2")
                 .hasFieldOrPropertyWithValue("hashtag", "random3");
         then(articleRepo).should().findById(articleId);
+    }
+
+    @DisplayName("없는 아이디로 게시글 검색 시, 예외 던지기")
+    @Test
+    void test_getArticlesUsingWrongArticleId() {
+        // Given wrong articleId
+        long articleId = createRandomId();
+        given(articleRepo.findById(articleId)).willReturn(Optional.empty());
+
+        // When searching it
+        Throwable t = catchThrowable(() -> sut.getArticleByArticleId(articleId));
+
+        // Then returns that specific article
+        assertThat(t).isInstanceOf(EntityNotFoundException.class);
+        assertThat(t).hasMessage("Cannot find that article with given id : " + articleId);
     }
 
     @DisplayName("파라미터로 게시글 검색 시 관련 게시글들 반환")
@@ -115,6 +132,20 @@ class ArticleServiceTest {
                 .hasFieldOrPropertyWithValue("hashtag", updated.hashtag());
         then(articleRepo).should().getReferenceById(updated.id());
         then(articleRepo).should().save(any(Article.class));
+    }
+
+    @DisplayName("없는 게시글을 수정 시도 시, 경고 로그만 찍고 끝")
+    @Test
+    void test_updatingNonExistedArticle() {
+        // Given updated info without original
+        ArticleDto updated = createArticleDto("newtitle", "newcontent", "#newtag");
+        given(articleRepo.getReferenceById(updated.id())).willThrow(EntityNotFoundException.class);
+
+        // When try updating it
+        sut.updateArticle(updated);
+
+        // Then should update it properly
+        then(articleRepo).should().getReferenceById(updated.id());
     }
 
     @DisplayName("게시글 아이디 입력하면 게시글 삭제")
