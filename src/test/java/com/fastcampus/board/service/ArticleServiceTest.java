@@ -1,23 +1,12 @@
 package com.fastcampus.board.service;
 
-import static com.fastcampus.board.TestHelper.USER_ACCOUNT;
-import static com.fastcampus.board.TestHelper.USER_ACCOUNT_DTO;
-import static com.fastcampus.board.TestHelper.createArticleDto;
-import static com.fastcampus.board.TestHelper.randNumb;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willDoNothing;
-
 import com.fastcampus.board.domain.Article;
 import com.fastcampus.board.domain.type.SearchType;
 import com.fastcampus.board.dto.ArticleDto;
 import com.fastcampus.board.dto.ArticleWithCommentsDto;
 import com.fastcampus.board.repository.ArticleRepository;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +14,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+import java.util.Optional;
+
+import static com.fastcampus.board.TestHelper.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.*;
 
 @DisplayName("비즈니스 로직 - 게시글")
 @ExtendWith(MockitoExtension.class) //이렇게 해야, 굳이 Application 을 안켜서 가벼워짐.
@@ -36,6 +36,17 @@ class ArticleServiceTest {
 
     @InjectMocks // Mock using Mock, ArticleRepository 를 주입하는 대상, ArticleService 에 의존함 (=사용당함)
     private ArticleService sut; // System Under Test
+
+    private static Page<Article> searchResults;
+
+    @BeforeAll
+    static void setUpBeforeAll() {
+        Article article1 = Article.of(USER_ACCOUNT, "search", "content", "#hash");
+        Article article2 = Article.of(USER_ACCOUNT, "key", "content", "#hash");
+        Article article3 = Article.of(USER_ACCOUNT, "vord", "content", "#hash");
+        searchResults = new PageImpl<>(List.of(article1, article2, article3));
+
+    }
 
     @DisplayName("아이디로 게시글 검색 시, 해당 게시글 반환")
     @Test
@@ -77,7 +88,54 @@ class ArticleServiceTest {
     void test_searchArticlesUsingParameters() {
         // Given search parameters
         SearchType searchType = SearchType.TITLE;
-        String searchKey = "search-keyword";
+        String searchKey = "exist-keyword";
+        Pageable pageable = Pageable.ofSize(20);
+        given(articleRepo.findByTitleContaining(searchKey, pageable)).willReturn(searchResults);
+
+        // When searching it
+        Page<ArticleDto> articles = sut.searchArticles(searchType, searchKey, pageable);
+
+        // Then returns matching articles
+        assertNotNull(articles);
+        assertFalse(articles.isEmpty());
+        assertEquals(3, articles.getTotalElements());
+
+        verify(articleRepo, never()).findByContentContaining(any(), any());
+        verify(articleRepo, never()).findByUserAccount_UsernameContaining(any(), any());
+        verify(articleRepo, never()).findByUserAccount_NicknameContaining(any(), any());
+        verify(articleRepo, never()).findByHashtag(any(), any());
+        then(articleRepo).should().findByTitleContaining(any(), any());
+    }
+
+    @DisplayName("파라미터 없이 게시글 검색 시, 모든 게시글 목록 반환")
+    @Test
+    void test_searchArticlesWithoutParameter() {
+        // Given no parameters
+        Pageable pageable = Pageable.ofSize(20);
+        given(articleRepo.findAll(pageable)).willReturn(searchResults);
+
+        // When searching it
+        Page<ArticleDto> articles = sut.searchArticles(null, null, pageable);
+
+        // Then returns all articles
+        assertNotNull(articles);
+        assertFalse(articles.isEmpty());
+        assertEquals(3, articles.getTotalElements());
+
+        verify(articleRepo, never()).findByTitleContaining(any(), any());
+        verify(articleRepo, never()).findByContentContaining(any(), any());
+        verify(articleRepo, never()).findByUserAccount_UsernameContaining(any(), any());
+        verify(articleRepo, never()).findByUserAccount_NicknameContaining(any(), any());
+        verify(articleRepo, never()).findByHashtag(any(), any());
+        then(articleRepo).should().findAll(pageable);
+    }
+
+    @DisplayName("파라미터 매칭 결과가 없으면, 빈 목록 반환")
+    @Test
+    void test_searchArticlesUsingNonMatchingParameter() {
+        // Given no parameters
+        SearchType searchType = SearchType.TITLE;
+        String searchKey = "non-exist-keyword";
         Pageable pageable = Pageable.ofSize(20);
         given(articleRepo.findByTitleContaining(searchKey, pageable)).willReturn(Page.empty());
 
@@ -85,9 +143,11 @@ class ArticleServiceTest {
         Page<ArticleDto> articles = sut.searchArticles(searchType, searchKey, pageable);
 
         // Then returns matching articles
-        assertThat(articles).isEmpty();
-        then(articleRepo).should().findByTitleContaining(searchKey, pageable);
+        assertNotNull(articles);
+        assertTrue(articles.isEmpty());
+        then(articleRepo).should().findByTitleContaining(any(), any());
     }
+
 
     @DisplayName("게시글 정보 입력 시, 게시글 저장")
     @Test
@@ -133,8 +193,9 @@ class ArticleServiceTest {
         // When try updating it
         sut.updateArticle(updated);
 
-        // Then should update it properly
+        // Then should NOT update it but just logging warning
         then(articleRepo).should().getReferenceById(updated.id());
+        verify(articleRepo, never()).save(any(Article.class));
     }
 
     @DisplayName("아이디로 게시글 삭제")
