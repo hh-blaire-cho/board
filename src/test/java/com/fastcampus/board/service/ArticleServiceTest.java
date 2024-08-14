@@ -57,7 +57,7 @@ class ArticleServiceTest {
         given(articleRepo.findById(articleId)).willReturn(Optional.of(article));
 
         // When searching it
-        ArticleWithCommentsDto articles = sut.getArticleByArticleId(articleId);
+        ArticleWithCommentsDto articles = sut.getArticle(articleId);
 
         // Then returns that specific article
         assertThat(articles).isNotNull();
@@ -76,7 +76,7 @@ class ArticleServiceTest {
         given(articleRepo.findById(articleId)).willReturn(Optional.empty());
 
         // When searching it
-        Throwable t = catchThrowable(() -> sut.getArticleByArticleId(articleId));
+        Throwable t = catchThrowable(() -> sut.getArticle(articleId));
 
         // Then returns that specific article
         assertThat(t).isInstanceOf(EntityNotFoundException.class);
