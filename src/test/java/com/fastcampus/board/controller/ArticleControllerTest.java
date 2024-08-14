@@ -60,7 +60,7 @@ class ArticleControllerTest {
         // When Request Article View
         // Then Returns That View
         Long articleId = randNumb();
-        given(articleService.getArticleByArticleId(articleId)).willReturn(createArticleWithCommentsDto());
+        given(articleService.getArticle(articleId)).willReturn(createArticleWithCommentsDto());
 
         mvc.perform(get("/articles/" + articleId))
                 .andExpect(status().isOk())
@@ -69,7 +69,7 @@ class ArticleControllerTest {
                 .andExpect(model().attributeExists("article"))
                 .andExpect(model().attributeExists("comments"));
 
-        then(articleService).should().getArticleByArticleId(articleId);
+        then(articleService).should().getArticle(articleId);
     }
 
     @Disabled("구현 중")

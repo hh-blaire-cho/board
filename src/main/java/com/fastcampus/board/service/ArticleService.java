@@ -64,7 +64,7 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public ArticleWithCommentsDto getArticleByArticleId(Long articleId) {
+    public ArticleWithCommentsDto getArticle(Long articleId) {
         return articleRepository.findById(articleId)
                 .map(ArticleWithCommentsDto::from)
                 .orElseThrow(() -> new EntityNotFoundException("Cannot find that article with given id : " + articleId));

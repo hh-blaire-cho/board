@@ -1,7 +1,5 @@
 package com.fastcampus.board;
 
-import com.fastcampus.board.domain.Article;
-import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.dto.ArticleDto;
 import com.fastcampus.board.dto.ArticleWithCommentsDto;
 import com.fastcampus.board.dto.CommentDto;
@@ -22,28 +20,22 @@ public class TestHelper {
         randNumb(), "hcho", "password", "hcho@mail.com", "winkyhcho", "This is memo",
         LocalDateTime.now(), "hcho", LocalDateTime.now(), "hcho");
 
-    //픽스쳐
-    public static UserAccount USER_ACCOUNT = USER_ACCOUNT_DTO.toEntity();
-
-    //픽스쳐
-    public static Article ARTICLE = Article.of(USER_ACCOUNT, "title", "content", "#tag");
-
-    public static ArticleDto createArticleDto(UserAccountDto userAccountDto, String title, String content, String hashtag) {
-        return ArticleDto.of(randNumb(), userAccountDto, title, content, hashtag,
+    public static ArticleDto createArticleDto(String title, String content, String hashtag) {
+        return ArticleDto.of(randNumb(), USER_ACCOUNT_DTO, title, content, hashtag,
             LocalDateTime.now(), randString(5), LocalDateTime.now(), randString(5));
     }
 
     public static ArticleDto createArticleDto() {
-        return createArticleDto(USER_ACCOUNT_DTO, randString(5), randString(5), "#" + randString(5));
+        return createArticleDto(randString(5), randString(5), "#" + randString(5));
     }
 
-    public static CommentDto createCommentDto(UserAccountDto userAccountDto, String content) {
-        return CommentDto.of(randNumb(), randNumb(), userAccountDto, content,
+    public static CommentDto createCommentDto(String content) {
+        return CommentDto.of(randNumb(), randNumb(), USER_ACCOUNT_DTO, content,
             LocalDateTime.now(), randString(5), LocalDateTime.now(), randString(5));
     }
 
     public static CommentDto createCommentDto() {
-        return createCommentDto(USER_ACCOUNT_DTO, randString(5));
+        return createCommentDto(randString(5));
     }
 
     public static ArticleWithCommentsDto createArticleWithCommentsDto() {

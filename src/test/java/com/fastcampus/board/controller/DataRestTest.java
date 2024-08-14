@@ -1,9 +1,5 @@
 package com.fastcampus.board.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,9 +10,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @Disabled("Spring Data REST 통합 테스트는 무겁고, 공부 목적 외 불필요")
 @DisplayName("Data Rest Test")
-@Transactional //이걸 해야 유닛테스트 끝나고 롤백이 됨.
+@Transactional
 @AutoConfigureMockMvc
 @SpringBootTest
 public class DataRestTest {
@@ -76,10 +76,24 @@ public class DataRestTest {
     @Test
     void test_requestComment() throws Exception {
         // given nothing
-        // when request comment by its id
+        // when request a comment by its id
         // then return that json responses
         mvc.perform(get("/api/comments/1"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.valueOf(halJson)));
+    }
+
+    @DisplayName("[api] 회원 관련 API 는 일체 제공하지 않음")
+    @Test
+    void test_userAccountSecurity() throws Exception {
+        // Given nothing
+        // When request UserAccount related
+        // then throws exception due to security
+        mvc.perform(get("/api/userAccounts")).andExpect(status().isNotFound());
+        mvc.perform(post("/api/userAccounts")).andExpect(status().isNotFound());
+        mvc.perform(put("/api/userAccounts")).andExpect(status().isNotFound());
+        mvc.perform(patch("/api/userAccounts")).andExpect(status().isNotFound());
+        mvc.perform(delete("/api/userAccounts")).andExpect(status().isNotFound());
+        mvc.perform(head("/api/userAccounts")).andExpect(status().isNotFound());
     }
 }
