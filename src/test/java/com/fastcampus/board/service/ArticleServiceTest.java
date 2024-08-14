@@ -1,6 +1,7 @@
 package com.fastcampus.board.service;
 
 import com.fastcampus.board.domain.Article;
+import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.domain.type.SearchType;
 import com.fastcampus.board.dto.ArticleDto;
 import com.fastcampus.board.dto.ArticleWithCommentsDto;
@@ -38,12 +39,14 @@ class ArticleServiceTest {
     private ArticleService sut; // System Under Test
 
     private static Page<Article> searchResults;
+    private static UserAccount userAccount;
 
     @BeforeAll
     static void setUpBeforeAll() {
-        Article article1 = Article.of(USER_ACCOUNT, "search", "content", "#hash");
-        Article article2 = Article.of(USER_ACCOUNT, "key", "content", "#hash");
-        Article article3 = Article.of(USER_ACCOUNT, "vord", "content", "#hash");
+        userAccount = USER_ACCOUNT_DTO.toEntity();
+        Article article1 = Article.of(userAccount, "search", "content", "#hash");
+        Article article2 = Article.of(userAccount, "key", "content", "#hash");
+        Article article3 = Article.of(userAccount, "vord", "content", "#hash");
         searchResults = new PageImpl<>(List.of(article1, article2, article3));
 
     }
@@ -53,7 +56,7 @@ class ArticleServiceTest {
     void test_getArticlesUsingArticleId() {
         // Given articleId
         long articleId = randNumb();
-        Article article = Article.of(USER_ACCOUNT, "random1", "random2", "random3");
+        Article article = Article.of(userAccount, "random1", "random2", "random3");
         given(articleRepo.findById(articleId)).willReturn(Optional.of(article));
 
         // When searching it
@@ -167,8 +170,8 @@ class ArticleServiceTest {
     @Test
     void test_updatingArticle() {
         // Given updated info with original
-        Article original = Article.of(USER_ACCOUNT, "title", "content", "#tag");
-        ArticleDto updated = createArticleDto(USER_ACCOUNT_DTO, "newtitle", "newcontent", "#newtag");
+        Article original = Article.of(userAccount, "title", "content", "#tag");
+        ArticleDto updated = createArticleDto("newtitle", "newcontent", "#newtag");
         given(articleRepo.getReferenceById(updated.id())).willReturn(original);
 
         // When try updating it

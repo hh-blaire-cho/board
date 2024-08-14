@@ -1,10 +1,13 @@
 package com.fastcampus.board.service;
 
+import com.fastcampus.board.domain.Article;
 import com.fastcampus.board.domain.Comment;
+import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.dto.CommentDto;
 import com.fastcampus.board.repository.ArticleRepository;
 import com.fastcampus.board.repository.CommentRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,11 +29,21 @@ class CommentServiceTest {
 
     @Mock
     private ArticleRepository articleRepo;
+
     @Mock
     private CommentRepository commentRepo;
 
     @InjectMocks // Mock using Mock, CommentRepository 를 주입하는 대상, CommentService 에 의존함 (=사용당함)
     private CommentService sut; // System Under Test
+
+    private static Article article;
+    private static UserAccount userAccount;
+
+    @BeforeAll
+    static void setUpFixture() {
+        userAccount = USER_ACCOUNT_DTO.toEntity();
+        article = Article.of(userAccount, "title", "content", "hashtag");
+    }
 
 
     @DisplayName("게시글 아이디 조회 시, 딸린 댓글 리스트 반환")
@@ -38,8 +51,8 @@ class CommentServiceTest {
     void test_searchCommentsUsingArticleId() {
         // Given article Id
         long articleId = randNumb();
-        Comment expected1 = Comment.of(ARTICLE, USER_ACCOUNT, "content1");
-        Comment expected2 = Comment.of(ARTICLE, USER_ACCOUNT, "content2");
+        Comment expected1 = Comment.of(article, userAccount, "content1");
+        Comment expected2 = Comment.of(article, userAccount, "content2");
         given(commentRepo.findByArticle_Id(articleId)).willReturn(List.of(expected1, expected2));
 
         // When search list of comments from that corresponding article
@@ -57,7 +70,7 @@ class CommentServiceTest {
     void test_savingComment() {
         // Given comments info
         CommentDto dto = createCommentDto();
-        given(articleRepo.getReferenceById(dto.articleId())).willReturn(ARTICLE);
+        given(articleRepo.getReferenceById(dto.articleId())).willReturn(article);
         given(commentRepo.save(any(Comment.class))).willReturn(null);
 
         // When try saving
@@ -87,7 +100,7 @@ class CommentServiceTest {
     @Test
     void test_updatingComment() {
         // Given original entity and updated dto
-        Comment original = Comment.of(ARTICLE, USER_ACCOUNT, "old-string");
+        Comment original = Comment.of(article, userAccount, "old-string");
         CommentDto updated = createCommentDto();
         given(commentRepo.getReferenceById(updated.id())).willReturn(original);
 
