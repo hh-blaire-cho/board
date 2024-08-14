@@ -1,20 +1,27 @@
 package com.fastcampus.board.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
 import com.fastcampus.board.config.SecurityConfig;
+import com.fastcampus.board.service.ArticleService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static com.fastcampus.board.TestHelper.createArticleWithCommentsDto;
+import static com.fastcampus.board.TestHelper.randNumb;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("뷰 컨트롤러 - 게시글")
 @Import(SecurityConfig.class)
@@ -22,6 +29,9 @@ import org.springframework.test.web.servlet.MockMvc;
 class ArticleControllerTest {
 
     private final MockMvc mvc;
+
+    @MockBean
+    private ArticleService articleService;
 
     public ArticleControllerTest(@Autowired MockMvc mvc) {
         this.mvc = mvc;
@@ -33,24 +43,33 @@ class ArticleControllerTest {
         // Given Nothing
         // When Request Articles View
         // Then Returns That View
+        given(articleService.searchArticles(eq(null), eq(null), any(Pageable.class))).willReturn(Page.empty());
+
         mvc.perform(get("/articles"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
             .andExpect(model().attributeExists("articles"));
+
+        then(articleService).should().searchArticles(eq(null), eq(null), any(Pageable.class));
     }
 
     @DisplayName("[view][GET] 게시글 상세 페이지 - 정상 호출")
     @Test
     public void test_ArticleViewRequest() throws Exception {
-        // Given Nothing
+        // Given article id
         // When Request Article View
         // Then Returns That View
-        mvc.perform(get("/articles/1"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-            .andExpect(view().name("articles/detail"))
-            .andExpect(model().attributeExists("article"))
-            .andExpect(model().attributeExists("comments"));
+        Long articleId = randNumb();
+        given(articleService.getArticleByArticleId(articleId)).willReturn(createArticleWithCommentsDto());
+
+        mvc.perform(get("/articles/" + articleId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/detail"))
+                .andExpect(model().attributeExists("article"))
+                .andExpect(model().attributeExists("comments"));
+
+        then(articleService).should().getArticleByArticleId(articleId);
     }
 
     @Disabled("구현 중")

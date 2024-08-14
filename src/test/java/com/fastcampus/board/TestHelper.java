@@ -3,10 +3,13 @@ package com.fastcampus.board;
 import com.fastcampus.board.domain.Article;
 import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.dto.ArticleDto;
+import com.fastcampus.board.dto.ArticleWithCommentsDto;
 import com.fastcampus.board.dto.CommentDto;
 import com.fastcampus.board.dto.UserAccountDto;
+
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.Set;
 
 public class TestHelper {
 
@@ -43,6 +46,14 @@ public class TestHelper {
         return createCommentDto(USER_ACCOUNT_DTO, randString(5));
     }
 
+    public static ArticleWithCommentsDto createArticleWithCommentsDto() {
+        return createArticleWithCommentsDto(randNumb(), randString(5), randString(5), randString(5));
+    }
+
+    public static ArticleWithCommentsDto createArticleWithCommentsDto(Long id, String title, String content, String hashtag) {
+        return ArticleWithCommentsDto.of(id, USER_ACCOUNT_DTO, Set.of(), title, content, hashtag,
+                LocalDateTime.now(), randString(5), LocalDateTime.now(), randString(5));
+    }
 
     public static long randNumb() {
         return RANDOM.nextLong(100) + 1;
