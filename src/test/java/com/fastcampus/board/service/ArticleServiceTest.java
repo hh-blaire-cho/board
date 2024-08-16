@@ -215,4 +215,19 @@ class ArticleServiceTest {
         then(articleRepo).should().deleteById(articleId);
     }
 
+    @DisplayName("게시글 갯수 조회")
+    @Test
+    void test_determiningArticlesCount1(){
+        // Given nothing
+        long expected = randNumb();
+        given(articleRepo.count()).willReturn(expected);
+
+        // When counting articles
+        long actual = sut.getArticlesCount();
+
+        // Then should return correct count
+        assertEquals(expected, actual);
+        then(articleRepo).should().count();
+    }
+
 }

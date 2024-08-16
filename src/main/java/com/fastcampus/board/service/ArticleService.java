@@ -69,4 +69,8 @@ public class ArticleService {
                 .map(ArticleWithCommentsDto::from)
                 .orElseThrow(() -> new EntityNotFoundException("Cannot find that article with given id : " + articleId));
     }
+
+    public long getArticlesCount() {
+        return articleRepository.count();
+    }
 }
