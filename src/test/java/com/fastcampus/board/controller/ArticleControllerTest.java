@@ -56,6 +56,7 @@ class ArticleControllerTest {
         mvc.perform(get("/articles"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(model().attributeExists("searchTypes"))
             .andExpect(model().attributeExists("paginationBarNumbers"))
             .andExpect(model().attributeExists("articles"));
 
