@@ -1,6 +1,7 @@
 package com.fastcampus.board.controller;
 
 import com.fastcampus.board.config.SecurityConfig;
+import com.fastcampus.board.domain.type.SearchType;
 import com.fastcampus.board.service.ArticleService;
 import com.fastcampus.board.service.PaginationService;
 import org.junit.jupiter.api.Disabled;
@@ -50,12 +51,15 @@ class ArticleControllerTest {
         // Given Nothing
         // When Request Articles View
         // Then Returns That View
-        given(articleService.searchArticles(eq(null), eq(null), any(Pageable.class))).willReturn(Page.empty());
-        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0, 1, 2, 3, 4));
+        given(articleService.searchArticles(eq(null), eq(null), any(Pageable.class)))
+                .willReturn(Page.empty()); // Page.empty() = 아무 페이지나 상관없다는 뜻
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt()))
+                .willReturn(List.of());
 
         mvc.perform(get("/articles"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(model().attributeExists("searchTypes"))
             .andExpect(model().attributeExists("paginationBarNumbers"))
             .andExpect(model().attributeExists("articles"));
 
@@ -63,19 +67,18 @@ class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
-    @DisplayName("[view][GET] 게시글 리스트 페이지 - 페이징&정렬 기능")
+    @DisplayName("[view][GET] 게시판 페이지 - 페이징 & 정렬 기능")
     @Test
-    void test_pagingAndSorting() throws Exception {
+    void test_ArticlesPagePagingAndSorting() throws Exception {
         // Given paging and sorting params
-        // When searching articles page
-        // then returns sorted articles page
+        // When searching articles page with that
+        // then show sorted articles
         String sortName = "title";
         String direction = "desc";
-        int pageNumber = 12;
-        int pageSize = 20;
-        List<Integer> barNumbers = List.of(11, 12, 13, 14, 15);
-        Sort sort = Sort.by(Sort.Order.desc(sortName));
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        int pageNumber = (int) randNumb();
+        int pageSize = pageNumber + (int) randNumb();
+        List<Integer> barNumbers = List.of();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
 
         given(articleService.searchArticles(null, null, pageable))
                 .willReturn(Page.empty());
@@ -99,7 +102,36 @@ class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(pageable.getPageNumber(), Page.empty().getTotalPages());
     }
 
-    @DisplayName("[view][GET] 게시글 상세 페이지 - 정상 호출")
+    @DisplayName("[view][GET] 게시판 페이지 - 검색")
+    @Test
+    public void test_ArticlesPageSearched() throws Exception {
+        // Given search keyword
+        // When searching articles page view
+        // Then returns selected articles using that keyword as parameter
+
+        SearchType searchType = SearchType.TITLE;
+        String searchKeyword = "title";
+        given(articleService.searchArticles(eq(searchType), eq(searchKeyword), any(Pageable.class)))
+                .willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt()))
+                .willReturn(List.of());
+
+        mvc.perform(
+                        get("/articles")
+                                .queryParam("searchType", searchType.name())
+                                .queryParam("searchValue", searchKeyword)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/index"))
+                .andExpect(model().attributeExists("articles"))
+                .andExpect(model().attributeExists("searchTypes"));
+        
+        then(articleService).should().searchArticles(eq(searchType), eq(searchKeyword), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
+    }
+
+    @DisplayName("[view][GET] 게시글 페이지 - 정상 호출")
     @Test
     public void test_ArticleViewRequest() throws Exception {
         // Given article id
