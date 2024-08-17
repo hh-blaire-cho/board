@@ -9,7 +9,6 @@ import lombok.ToString;
 @Getter
 @ToString
 @Table(indexes = {
-    @Index(columnList = "username", unique = true),
     @Index(columnList = "email", unique = true),
     @Index(columnList = "createdAt"),
     @Index(columnList = "createdBy")
@@ -18,11 +17,7 @@ import lombok.ToString;
 public class UserAccount extends AuditingFields {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Setter
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String username;
 
     @Setter
@@ -66,12 +61,12 @@ public class UserAccount extends AuditingFields {
         if (!(o instanceof UserAccount userAccount)) {
             return false;
         }
-        return id != null && id.equals(userAccount.id);
+        return username != null && username.equals(userAccount.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(username);
     }
 
 }
