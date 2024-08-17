@@ -17,7 +17,7 @@ public class TestHelper {
 
     //픽스쳐
     public static final UserAccountDto USER_ACCOUNT_DTO = UserAccountDto.of(
-        randNumb(), "hcho", "password", "hcho@mail.com", "winkyhcho", "This is memo",
+            "hcho", "password", "hcho@mail.com", "winkyhcho", "This is memo",
         LocalDateTime.now(), "hcho", LocalDateTime.now(), "hcho");
 
     public static ArticleDto createArticleDto(String title, String content, String hashtag) {

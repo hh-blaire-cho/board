@@ -22,6 +22,7 @@ public class Comment extends AuditingFields {
 
     @Setter
     @ManyToOne(optional = false)
+    @JoinColumn(name = "username")
     private UserAccount userAccount;
 
     @Setter
