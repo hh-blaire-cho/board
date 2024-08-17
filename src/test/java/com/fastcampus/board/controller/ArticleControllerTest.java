@@ -1,6 +1,7 @@
 package com.fastcampus.board.controller;
 
 import com.fastcampus.board.config.SecurityConfig;
+import com.fastcampus.board.domain.type.SearchType;
 import com.fastcampus.board.service.ArticleService;
 import com.fastcampus.board.service.PaginationService;
 import org.junit.jupiter.api.Disabled;
@@ -99,6 +100,35 @@ class ArticleControllerTest {
 
         then(articleService).should().searchArticles(null, null, pageable);
         then(paginationService).should().getPaginationBarNumbers(pageable.getPageNumber(), Page.empty().getTotalPages());
+    }
+
+    @DisplayName("[view][GET] 게시판 페이지 - 검색")
+    @Test
+    public void test_ArticlesPageSearched() throws Exception {
+        // Given search keyword
+        // When searching articles page view
+        // Then returns selected articles using that keyword as parameter
+
+        SearchType searchType = SearchType.TITLE;
+        String searchKeyword = "title";
+        given(articleService.searchArticles(eq(searchType), eq(searchKeyword), any(Pageable.class)))
+                .willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt()))
+                .willReturn(List.of());
+
+        mvc.perform(
+                        get("/articles")
+                                .queryParam("searchType", searchType.name())
+                                .queryParam("searchValue", searchKeyword)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/index"))
+                .andExpect(model().attributeExists("articles"))
+                .andExpect(model().attributeExists("searchTypes"));
+        
+        then(articleService).should().searchArticles(eq(searchType), eq(searchKeyword), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
     @DisplayName("[view][GET] 게시글 페이지 - 정상 호출")
