@@ -1,9 +1,11 @@
 package com.fastcampus.board.controller;
 
 import com.fastcampus.board.config.SecurityConfig;
+import com.fastcampus.board.domain.constant.FormStatus;
 import com.fastcampus.board.domain.constant.SearchType;
 import com.fastcampus.board.dto.ArticleDto;
 import com.fastcampus.board.dto.request.ArticleRequest;
+import com.fastcampus.board.dto.response.ArticleResponse;
 import com.fastcampus.board.service.ArticleService;
 import com.fastcampus.board.service.PaginationService;
 import com.fastcampus.board.util.FormDataEncoder;
@@ -23,8 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static com.fastcampus.board.TestHelper.createArticleWithCommentsDto;
-import static com.fastcampus.board.TestHelper.randNumb;
+import static com.fastcampus.board.TestHelper.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -222,6 +223,42 @@ class ArticleControllerTest {
                 .andExpect(view().name("redirect:/articles"))
                 .andExpect(redirectedUrl("/articles"));
         then(articleService).should().deleteArticle(articleId);
+    }
+
+    @DisplayName("[view][GET] 새 게시글 작성 페이지")
+    @Test
+    void test_creatingWritingNewArticlePage() throws Exception {
+        // Given nothing
+        // When requesting the page of writing article
+        // Then returns that page properly
+
+        mvc.perform(get("/articles/form"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/form"))
+                .andExpect(model().attribute("formStatus", FormStatus.CREATE));
+    }
+
+
+    @DisplayName("[view][GET] 게시글 수정 페이지")
+    @Test
+    void test_creatingModifyingArticlePage() throws Exception {
+        // Given nothing
+        // When requesting the page of writing article
+        // Then returns that page properly
+
+        long articleId = 1L;
+        ArticleDto dto = createArticleDto();
+        given(articleService.getArticle(articleId)).willReturn(dto);
+
+        // When & Then
+        mvc.perform(get("/articles/" + articleId + "/form"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/form"))
+                .andExpect(model().attribute("article", ArticleResponse.from(dto)))
+                .andExpect(model().attribute("formStatus", FormStatus.UPDATE));
+        then(articleService).should().getArticle(articleId);
     }
 
     @Disabled("구현 중")
