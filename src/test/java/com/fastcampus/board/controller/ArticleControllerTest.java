@@ -139,7 +139,7 @@ class ArticleControllerTest {
         // Then Returns That View
         Long articleId = randNumb();
         Long totalCount = randNumb();
-        given(articleService.getArticle(articleId)).willReturn(createArticleWithCommentsDto());
+        given(articleService.getArticleWithComments(articleId)).willReturn(createArticleWithCommentsDto());
         given(articleService.getArticlesCount()).willReturn(totalCount);
 
         mvc.perform(get("/articles/" + articleId))
@@ -149,7 +149,7 @@ class ArticleControllerTest {
                 .andExpect(model().attributeExists("article"))
                 .andExpect(model().attributeExists("comments"));
 
-        then(articleService).should().getArticle(articleId);
+        then(articleService).should().getArticleWithComments(articleId);
         then(articleService).should().getArticlesCount();
     }
 

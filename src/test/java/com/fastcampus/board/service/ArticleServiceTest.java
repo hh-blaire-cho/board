@@ -64,7 +64,27 @@ class ArticleServiceTest {
         given(articleRepo.findById(articleId)).willReturn(Optional.of(article));
 
         // When searching it
-        ArticleWithCommentsDto articles = sut.getArticle(articleId);
+        ArticleDto articles = sut.getArticle(articleId);
+
+        // Then returns that specific article
+        assertThat(articles).isNotNull();
+        assertThat(articles)
+                .hasFieldOrPropertyWithValue("title", "random1")
+                .hasFieldOrPropertyWithValue("content", "random2")
+                .hasFieldOrPropertyWithValue("hashtag", "random3");
+        then(articleRepo).should().findById(articleId);
+    }
+
+    @DisplayName("아이디로 게시글 검색 시, 해당 게시글&댓글 반환")
+    @Test
+    void test_getArticleWithCommentsUsingGoodArticleId() {
+        // Given articleId
+        long articleId = randNumb();
+        Article article = Article.of(userAccount, "random1", "random2", "random3");
+        given(articleRepo.findById(articleId)).willReturn(Optional.of(article));
+
+        // When searching that articleWithComments
+        ArticleWithCommentsDto articles = sut.getArticleWithComments(articleId);
 
         // Then returns that specific article
         assertThat(articles).isNotNull();
@@ -77,7 +97,7 @@ class ArticleServiceTest {
 
     @DisplayName("없는 아이디로 게시글 검색 시, 예외 던지기")
     @Test
-    void test_getArticlesUsingWrongArticleId() {
+    void test_getArticleUsingWrongArticleId() {
         // Given wrong articleId
         long articleId = randNumb();
         given(articleRepo.findById(articleId)).willReturn(Optional.empty());
@@ -86,6 +106,21 @@ class ArticleServiceTest {
         Throwable t = catchThrowable(() -> sut.getArticle(articleId));
 
         // Then returns that specific article
+        assertThat(t).isInstanceOf(EntityNotFoundException.class);
+        assertThat(t).hasMessage("Cannot find that article with given id : " + articleId);
+    }
+
+    @DisplayName("없는 아이디로 게시글(w댓글) 검색 시, 예외 던지기")
+    @Test
+    void test_getArticleWithCommentsUsingWrongArticleId() {
+        // Given wrong articleId
+        long articleId = randNumb();
+        given(articleRepo.findById(articleId)).willReturn(Optional.empty());
+
+        // When searching that articleWithComments
+        Throwable t = catchThrowable(() -> sut.getArticleWithComments(articleId));
+
+        // Then returns throwable
         assertThat(t).isInstanceOf(EntityNotFoundException.class);
         assertThat(t).hasMessage("Cannot find that article with given id : " + articleId);
     }
