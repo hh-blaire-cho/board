@@ -28,6 +28,13 @@ public record CommentDto(
         return new CommentDto(id, articleId, userAccountDto, content, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
+    public static CommentDto of(
+            Long articleId,
+            UserAccountDto userAccountDto,
+            String content) {
+        return new CommentDto(null, articleId, userAccountDto, content, null, null, null, null);
+    }
+
     public static CommentDto from(Comment entity) {
         return new CommentDto(
                 entity.getId(),
