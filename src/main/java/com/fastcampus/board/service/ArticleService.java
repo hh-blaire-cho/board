@@ -1,7 +1,7 @@
 package com.fastcampus.board.service;
 
 import com.fastcampus.board.domain.Article;
-import com.fastcampus.board.domain.type.SearchType;
+import com.fastcampus.board.domain.constant.SearchType;
 import com.fastcampus.board.dto.ArticleDto;
 import com.fastcampus.board.dto.ArticleWithCommentsDto;
 import com.fastcampus.board.repository.ArticleRepository;

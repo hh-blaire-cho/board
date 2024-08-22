@@ -1,7 +1,7 @@
 package com.fastcampus.board.controller;
 
 
-import com.fastcampus.board.domain.type.SearchType;
+import com.fastcampus.board.domain.constant.SearchType;
 import com.fastcampus.board.dto.response.ArticleResponse;
 import com.fastcampus.board.dto.response.ArticleWithCommentsResponse;
 import com.fastcampus.board.service.ArticleService;

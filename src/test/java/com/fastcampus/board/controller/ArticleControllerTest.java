@@ -1,7 +1,7 @@
 package com.fastcampus.board.controller;
 
 import com.fastcampus.board.config.SecurityConfig;
-import com.fastcampus.board.domain.type.SearchType;
+import com.fastcampus.board.domain.constant.SearchType;
 import com.fastcampus.board.service.ArticleService;
 import com.fastcampus.board.service.PaginationService;
 import org.junit.jupiter.api.Disabled;
