@@ -2,6 +2,8 @@ package com.fastcampus.board.dto;
 
 import com.fastcampus.board.domain.Article;
 import com.fastcampus.board.domain.Comment;
+import com.fastcampus.board.domain.UserAccount;
+
 import java.time.LocalDateTime;
 
 public record CommentDto(
@@ -48,10 +50,10 @@ public record CommentDto(
         );
     }
 
-    public Comment toEntity(Article entity) {
+    public Comment toEntity(Article article, UserAccount userAccount) {
         return Comment.of(
-                entity,
-                userAccountDto.toEntity(),
+                article,
+                userAccount, //userAccountDto 에 비해 id 있음을 확실히 보장
                 content
         );
     }

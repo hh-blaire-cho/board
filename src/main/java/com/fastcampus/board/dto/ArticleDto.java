@@ -1,6 +1,8 @@
 package com.fastcampus.board.dto;
 
 import com.fastcampus.board.domain.Article;
+import com.fastcampus.board.domain.UserAccount;
+
 import java.time.LocalDateTime;
 
 public record ArticleDto(
@@ -51,9 +53,9 @@ public record ArticleDto(
         );
     }
 
-    public Article toEntity() {
+    public Article toEntity(UserAccount userAccount) {
         return Article.of(
-                userAccountDto.toEntity(),
+                userAccount, //userAccountDto 에 비해 id 있음을 확실히 보장
                 title,
                 content,
                 hashtag
