@@ -74,7 +74,7 @@ class CommentServiceTest {
         given(commentRepo.save(any(Comment.class))).willReturn(null);
 
         // When try saving
-        sut.saveComment(dto);
+        sut.saveComment(dto, userAccount);
 
         // Then saves that properly
         then(articleRepo).should().getReferenceById(dto.articleId());
@@ -89,7 +89,7 @@ class CommentServiceTest {
         given(articleRepo.getReferenceById(dto.articleId())).willThrow(EntityNotFoundException.class);
 
         // When trying saving comment
-        sut.saveComment(dto);
+        sut.saveComment(dto, userAccount);
 
         // Then do nothing but logging warning
         then(articleRepo).should().getReferenceById(dto.articleId());
