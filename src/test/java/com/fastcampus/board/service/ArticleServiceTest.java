@@ -160,7 +160,7 @@ class ArticleServiceTest {
         given(articleRepo.save(any(Article.class))).willReturn(null);
 
         // When try saving it
-        sut.saveArticle(dto, userAccount);
+        sut.saveArticle(dto);
 
         // Then should save it properly
         then(articleRepo).should().save(any(Article.class));

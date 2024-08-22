@@ -1,7 +1,6 @@
 package com.fastcampus.board.service;
 
 import com.fastcampus.board.domain.Comment;
-import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.dto.CommentDto;
 import com.fastcampus.board.repository.ArticleRepository;
 import com.fastcampus.board.repository.CommentRepository;
@@ -30,9 +29,9 @@ public class CommentService {
                 .toList();
     }
 
-    public void saveComment(CommentDto dto, UserAccount userAccount) {
+    public void saveComment(CommentDto dto) {
         try {
-            Comment comment = dto.toEntity(articleRepository.getReferenceById(dto.articleId()), userAccount);
+            Comment comment = dto.toEntity(articleRepository.getReferenceById(dto.articleId()));
             commentRepository.save(comment);
         } catch (EntityNotFoundException e) {
             log.warn("Comment save fail. Cannot find mapping article - dto: {}", dto);
