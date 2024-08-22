@@ -6,6 +6,7 @@ import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.dto.CommentDto;
 import com.fastcampus.board.repository.ArticleRepository;
 import com.fastcampus.board.repository.CommentRepository;
+import com.fastcampus.board.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +33,9 @@ class CommentServiceTest {
 
     @Mock
     private CommentRepository commentRepo;
+
+    @Mock
+    private UserAccountRepository userAccountRepo;
 
     @InjectMocks // Mock using Mock, CommentRepository 를 주입하는 대상, CommentService 에 의존함 (=사용당함)
     private CommentService sut; // System Under Test
@@ -71,6 +75,7 @@ class CommentServiceTest {
         // Given comments info
         CommentDto dto = createCommentDto();
         given(articleRepo.getReferenceById(dto.articleId())).willReturn(article);
+        given(userAccountRepo.getReferenceById(dto.userAccountDto().username())).willReturn(userAccount);
         given(commentRepo.save(any(Comment.class))).willReturn(null);
 
         // When try saving
@@ -78,10 +83,11 @@ class CommentServiceTest {
 
         // Then saves that properly
         then(articleRepo).should().getReferenceById(dto.articleId());
+        then(userAccountRepo).should().getReferenceById(dto.userAccountDto().username());
         then(commentRepo).should().save(any(Comment.class));
     }
 
-    @DisplayName("맞는 게시글이 없는데, 댓글 저장 시도 시, 경고 로그만 찍고 끝")
+    @DisplayName("연계 게시글 정보가 없는데, 댓글 저장 시도 시, 경고 로그만 찍고 끝")
     @Test
     void test_savingCommentWithNoArticle() {
         // Given non-existing article
@@ -93,6 +99,24 @@ class CommentServiceTest {
 
         // Then do nothing but logging warning
         then(articleRepo).should().getReferenceById(dto.articleId());
+        then(userAccountRepo).shouldHaveNoInteractions(); // 게시글 검색이 실패하면, 사용자는 검색하지 않음
+        then(commentRepo).shouldHaveNoInteractions();
+    }
+
+    @DisplayName("연계 사용자 정보가 없는데, 댓글 저장 시도 시, 경고 로그만 찍고 끝")
+    @Test
+    void test_savingCommentWithNoUserAccount() {
+        // Given non-existing user account
+        CommentDto dto = createCommentDto();
+        given(articleRepo.getReferenceById(dto.articleId())).willReturn(article); // 게시글은 정상이라고 가정
+        given(userAccountRepo.getReferenceById(dto.userAccountDto().username())).willThrow(EntityNotFoundException.class);
+
+        // When trying saving comment
+        sut.saveComment(dto);
+
+        // Then do nothing but logging warning
+        then(articleRepo).should().getReferenceById(dto.articleId()); // 게시글 검색은 함
+        then(userAccountRepo).should().getReferenceById(dto.userAccountDto().username());
         then(commentRepo).shouldHaveNoInteractions();
     }
 
