@@ -2,10 +2,11 @@ package com.fastcampus.board.service;
 
 import com.fastcampus.board.domain.Article;
 import com.fastcampus.board.domain.UserAccount;
-import com.fastcampus.board.domain.type.SearchType;
+import com.fastcampus.board.domain.constant.SearchType;
 import com.fastcampus.board.dto.ArticleDto;
 import com.fastcampus.board.dto.ArticleWithCommentsDto;
 import com.fastcampus.board.repository.ArticleRepository;
+import com.fastcampus.board.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +36,9 @@ class ArticleServiceTest {
     @Mock
     private ArticleRepository articleRepo;
 
+    @Mock
+    private UserAccountRepository userAccountRepo;
+
     @InjectMocks // Mock using Mock, ArticleRepository 를 주입하는 대상, ArticleService 에 의존함 (=사용당함)
     private ArticleService sut; // System Under Test
 
@@ -60,7 +64,27 @@ class ArticleServiceTest {
         given(articleRepo.findById(articleId)).willReturn(Optional.of(article));
 
         // When searching it
-        ArticleWithCommentsDto articles = sut.getArticle(articleId);
+        ArticleDto articles = sut.getArticle(articleId);
+
+        // Then returns that specific article
+        assertThat(articles).isNotNull();
+        assertThat(articles)
+                .hasFieldOrPropertyWithValue("title", "random1")
+                .hasFieldOrPropertyWithValue("content", "random2")
+                .hasFieldOrPropertyWithValue("hashtag", "random3");
+        then(articleRepo).should().findById(articleId);
+    }
+
+    @DisplayName("아이디로 게시글 검색 시, 해당 게시글&댓글 반환")
+    @Test
+    void test_getArticleWithCommentsUsingGoodArticleId() {
+        // Given articleId
+        long articleId = randNumb();
+        Article article = Article.of(userAccount, "random1", "random2", "random3");
+        given(articleRepo.findById(articleId)).willReturn(Optional.of(article));
+
+        // When searching that articleWithComments
+        ArticleWithCommentsDto articles = sut.getArticleWithComments(articleId);
 
         // Then returns that specific article
         assertThat(articles).isNotNull();
@@ -73,7 +97,7 @@ class ArticleServiceTest {
 
     @DisplayName("없는 아이디로 게시글 검색 시, 예외 던지기")
     @Test
-    void test_getArticlesUsingWrongArticleId() {
+    void test_getArticleUsingWrongArticleId() {
         // Given wrong articleId
         long articleId = randNumb();
         given(articleRepo.findById(articleId)).willReturn(Optional.empty());
@@ -82,6 +106,21 @@ class ArticleServiceTest {
         Throwable t = catchThrowable(() -> sut.getArticle(articleId));
 
         // Then returns that specific article
+        assertThat(t).isInstanceOf(EntityNotFoundException.class);
+        assertThat(t).hasMessage("Cannot find that article with given id : " + articleId);
+    }
+
+    @DisplayName("없는 아이디로 게시글(w댓글) 검색 시, 예외 던지기")
+    @Test
+    void test_getArticleWithCommentsUsingWrongArticleId() {
+        // Given wrong articleId
+        long articleId = randNumb();
+        given(articleRepo.findById(articleId)).willReturn(Optional.empty());
+
+        // When searching that articleWithComments
+        Throwable t = catchThrowable(() -> sut.getArticleWithComments(articleId));
+
+        // Then returns throwable
         assertThat(t).isInstanceOf(EntityNotFoundException.class);
         assertThat(t).hasMessage("Cannot find that article with given id : " + articleId);
     }
@@ -157,12 +196,15 @@ class ArticleServiceTest {
     void test_savingArticle() {
         // Given article info
         ArticleDto dto = createArticleDto();
-        given(articleRepo.save(any(Article.class))).willReturn(null);
+        Article article = Article.of(userAccount, "random1", "random2", "random3");
+        given(userAccountRepo.getReferenceById(dto.userAccountDto().username())).willReturn(userAccount);
+        given(articleRepo.save(any(Article.class))).willReturn(article);
 
         // When try saving it
-        sut.saveArticle(dto, userAccount);
+        sut.saveArticle(dto);
 
         // Then should save it properly
+        then(userAccountRepo).should().getReferenceById(dto.userAccountDto().username());
         then(articleRepo).should().save(any(Article.class));
     }
 
@@ -175,7 +217,7 @@ class ArticleServiceTest {
         given(articleRepo.getReferenceById(updated.id())).willReturn(original);
 
         // When try updating it
-        sut.updateArticle(updated);
+        sut.updateArticle(updated.id(), updated); // 시험 단계에서 original id 는 알 수 없고 null 이니, 정확한 아이디를 넣었다고 가정.
 
         // Then should update it properly
         assertThat(original)
@@ -194,7 +236,7 @@ class ArticleServiceTest {
         given(articleRepo.getReferenceById(updated.id())).willThrow(EntityNotFoundException.class);
 
         // When try updating it
-        sut.updateArticle(updated);
+        sut.updateArticle(updated.id(), updated); // 시험 단계에서 original id 는 알 수 없고 null 이니, 정확한 아이디를 넣었다고 가정
 
         // Then should NOT update it but just logging warning
         then(articleRepo).should().getReferenceById(updated.id());
