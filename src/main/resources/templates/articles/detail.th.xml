@@ -13,6 +13,12 @@
       <attr sel="#article-content/pre" th:text="*{content}"/>
   </attr>
 
+  <attr sel="#article-buttons">
+    <attr sel="#delete-article-form" th:action="'/articles/' + *{id} + '/delete'" th:method="post">
+      <attr sel="#update-article" th:href="'/articles/' + *{id} + '/form'" />
+    </attr>
+  </attr>
+
   <attr sel="#comments" th:remove="all-but-first">
       <attr sel="li[0]" th:each="comment : ${comments}">
           <attr sel="div/strong" th:text="${comment.nickname}"/>
