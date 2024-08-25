@@ -17,13 +17,16 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    // TODO: 실제 인증 정보를 넣어줘야 한다.
+    private final UserAccountDto temp_user_dto = UserAccountDto.of(
+            "iady7777", "pw", "hcho302@mail.com", "KOLALA", "memo", null, null, null, null
+    );
+
 
     @PostMapping("/new")
     public String postNewComment(CommentRequest commentRequest) {
         // TODO: 인증 정보를 넣어줘야 한다.
-        commentService.saveComment(commentRequest.toDto(UserAccountDto.of(
-                "rhkwk3333", "password", "hcho302@mail.com", "KOLALALA", "memo", null, null, null, null
-        )));
+        commentService.saveComment(commentRequest.toDto(temp_user_dto));
 
         return "redirect:/articles/" + commentRequest.articleId();
     }
