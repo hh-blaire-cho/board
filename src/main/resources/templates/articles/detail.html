@@ -57,11 +57,11 @@
 
   <div class="row g-5">
     <section>
-      <form class="row g-3">
+      <form class="row g-3" id="comment-form">
+        <input type="hidden" class="article-id">
         <div class="col-8">
           <label for="comment-textbox" hidden>댓글</label>
-          <textarea class="form-control" id="comment-textbox" placeholder="댓글 쓰기.."
-                    rows="3"></textarea>
+          <textarea class="form-control" id="comment-textbox" placeholder="댓글 쓰기.." rows="3" required></textarea>
         </div>
         <div class="col-auto">
           <label for="comment-submit" hidden>댓글 쓰기</label>
@@ -71,11 +71,19 @@
 
       <ul id="comments" class="row col-7">
         <li>
-          <div>
-            <strong>default-user1</strong>
-            <small><time>1995-11-19</time></small>
-            <p>random-default-comment1</p>
-          </div>
+          <form class="comment-form">
+            <input type="hidden" class="article-id">
+            <div class="row">
+              <div class="col-md-10 col-lg-9">
+                <strong>default-user1</strong>
+                <small><time>1995-11-19</time></small>
+                <p>random-default-comment1</p>
+              </div>
+              <div class="col-2 mb-3">
+                <button type="submit" class="btn btn-outline-danger" id="delete-comment-button">삭제</button>
+              </div>
+            </div>
+          </form>
         </li>
         <li>
           <div>

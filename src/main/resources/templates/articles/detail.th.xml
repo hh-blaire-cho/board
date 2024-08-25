@@ -11,7 +11,6 @@
       <attr sel="#created-at" th:datetime="*{createdAt}" th:text="*{#temporals.format(createdAt, 'yyyy-MM-dd HH:mm:ss')}"/>
       <attr sel="#hashtag" th:text="*{hashtag}"/>
       <attr sel="#article-content/pre" th:text="*{content}"/>
-  </attr>
 
   <attr sel="#article-buttons">
     <attr sel="#delete-article-form" th:action="'/articles/' + *{id} + '/delete'" th:method="post">
@@ -19,12 +18,19 @@
     </attr>
   </attr>
 
+    <attr sel=".article-id" th:name="articleId" th:value="*{id}" />
+    <attr sel="#comment-form" th:action="@{/comments/new}" th:method="post">
+    <attr sel="#comment-textbox" th:name="content" />
+  </attr>
+
   <attr sel="#comments" th:remove="all-but-first">
-      <attr sel="li[0]" th:each="comment : ${comments}">
-          <attr sel="div/strong" th:text="${comment.nickname}"/>
-          <attr sel="div/small/time" th:datetime="${comment.createdAt}" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm:ss')}"/>
-          <attr sel="div/p" th:text="${comment.content}"/>
+    <attr sel="li[0]" th:each="comment : ${comments}">
+      <attr sel="form" th:action="'/comments/' + ${comment.id} + '/delete'" th:method="post">
+        <attr sel="div/strong" th:text="${comment.nickname}" />
+        <attr sel="div/small/time" th:datetime="${comment.createdAt}" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm:ss')}" />
+        <attr sel="div/p" th:text="${comment.content}" />
       </attr>
+    </attr>
   </attr>
 
   <attr sel="#pagination">
@@ -38,5 +44,6 @@
           th:class="'page-link' + (*{id} + 1 > ${totalCount} ? ' disabled' : '')"
         />
      </attr>
+    </attr>
   </attr>
 </thlogic>
