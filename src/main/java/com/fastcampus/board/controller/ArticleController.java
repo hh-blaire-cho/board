@@ -28,6 +28,11 @@ public class ArticleController {
     private final ArticleService articleService;
     private final PaginationService paginationService;
 
+    // TODO: 실제 인증 정보를 넣어줘야 한다.
+    private final UserAccountDto temp_user_dto = UserAccountDto.of(
+            "iady7777", "pw", "hcho302@mail.com", "KOLALA", "memo", null, null, null, null
+    );
+
     @GetMapping
     public String articles(
             @RequestParam(required = false) SearchType searchType,
@@ -65,9 +70,7 @@ public class ArticleController {
     @PostMapping("/form")
     public String postNewArticle(ArticleRequest articleRequest) {
         // TODO: 인증 정보를 넣어줘야 한다.
-        articleService.saveArticle(articleRequest.toDto(UserAccountDto.of(
-                "iady7777", "password", "hcho302@mail.com", "hcho", "memo", null, null, null, null
-        )));
+        articleService.saveArticle(articleRequest.toDto(temp_user_dto));
 
         return "redirect:/articles";
     }
@@ -83,9 +86,7 @@ public class ArticleController {
     @PostMapping("/{articleId}/form")
     public String updateArticle(@PathVariable Long articleId, ArticleRequest articleRequest) {
         // TODO: 인증 정보를 넣어줘야 한다.
-        articleService.updateArticle(articleId, articleRequest.toDto(UserAccountDto.of(
-                "hcho", "password", "hcho302@mail.com", "hcho", "memo", null, null, null, null
-        )));
+        articleService.updateArticle(articleId, articleRequest.toDto(temp_user_dto));
 
         return "redirect:/articles/" + articleId;
     }
