@@ -22,7 +22,7 @@ public class CommentController {
     public String postNewComment(CommentRequest commentRequest) {
         // TODO: 인증 정보를 넣어줘야 한다.
         commentService.saveComment(commentRequest.toDto(UserAccountDto.of(
-                "hcho", "password", "hcho302@mail.com", "hcho", "memo", null, null, null, null
+                "rhkwk3333", "password", "hcho302@mail.com", "KOLALALA", "memo", null, null, null, null
         )));
 
         return "redirect:/articles/" + commentRequest.articleId();
