@@ -4,6 +4,7 @@ package com.fastcampus.board.controller;
 import com.fastcampus.board.dto.UserAccountDto;
 import com.fastcampus.board.dto.request.CommentRequest;
 import com.fastcampus.board.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,7 @@ public class CommentController {
     );
 
 
+    @Operation(summary = "create new comment")
     @PostMapping("/new")
     public String postNewComment(CommentRequest commentRequest) {
         // TODO: 인증 정보를 넣어줘야 한다.
@@ -31,6 +33,7 @@ public class CommentController {
         return "redirect:/articles/" + commentRequest.articleId();
     }
 
+    @Operation(summary = "delete selected comment")
     @PostMapping("/{commentId}/delete")
     public String deleteComment(@PathVariable Long commentId, Long articleId) {
         commentService.deleteComment(commentId);
