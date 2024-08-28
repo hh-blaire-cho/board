@@ -11,10 +11,10 @@ logging:
 
 spring:
   datasource:
-    url: "jdbc:mysql://localhost:3306/boarddb"
-    username: root
-    password: 1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:postgresql://localhost:5432/boarddb
+    username: boarduser
+    password: board1234
+    driver-class-name: org.postgresql.Driver
   jpa:
     defer-datasource-initialization: true
     hibernate.ddl-auto: create
