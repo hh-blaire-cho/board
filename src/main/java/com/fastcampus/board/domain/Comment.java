@@ -57,7 +57,7 @@ public class Comment extends AuditingFields {
         if (!(o instanceof Comment that)) {
             return false;
         }
-        return id != null && Objects.equals(id, that.id);
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override

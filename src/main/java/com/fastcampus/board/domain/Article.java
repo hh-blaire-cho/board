@@ -1,12 +1,13 @@
 package com.fastcampus.board.domain;
 
 import jakarta.persistence.*;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @ToString(callSuper = true)
@@ -65,10 +66,10 @@ public class Article extends AuditingFields {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Article article)) {
+        if (!(o instanceof Article that)) {
             return false;
         }
-        return id != null && id.equals(article.id);
+        return id != null && id.equals(that.getId());
     }
 
     @Override
