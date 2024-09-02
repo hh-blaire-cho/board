@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.fastcampus.board.TestHelper.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,6 +48,23 @@ class CommentServiceTest {
     static void setUpFixture() {
         userAccount = USER_ACCOUNT_DTO.toEntity();
         article = Article.of(userAccount, "title", "content", "hashtag");
+    }
+
+    @DisplayName("댓글 아이디 조회 시, 댓글 반환")
+    @Test
+    void test_getCommentUsingCommentId() {
+        // Given commentId
+        long commentId = randNumb();
+        Comment comment = Comment.of(article, userAccount, "random-content");
+        given(commentRepo.findById(commentId)).willReturn(Optional.of(comment));
+
+        // When search list of comments from that corresponding post
+        CommentDto commentDto = sut.getComment(commentId);
+
+        // Then returns that well
+        assertThat(comment).isNotNull();
+        assertThat(comment).hasFieldOrPropertyWithValue("content", "random-content");
+        then(commentRepo).should().findById(commentId);
     }
 
 
