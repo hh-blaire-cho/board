@@ -23,6 +23,7 @@ public class DataRestTest {
 
     private final MockMvc mvc;
     private final String halJson = "application/hal+json";
+    private final String restHeader = "/restapi";
 
     public DataRestTest(@Autowired MockMvc mockMvc) {
         this.mvc = mockMvc;
@@ -34,9 +35,9 @@ public class DataRestTest {
         // given nothing
         // when request article list
         // then return that json responses
-        mvc.perform(get("/api/articles"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.valueOf(halJson)));
+        mvc.perform(get(restHeader + "/articles"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.valueOf(halJson)));
     }
 
     @DisplayName(("[api] 게시글 단건 아이디로 조회"))
@@ -45,9 +46,9 @@ public class DataRestTest {
         // given nothing
         // when request article by its id
         // then return that json responses
-        mvc.perform(get("/api/articles/1"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.valueOf(halJson)));
+        mvc.perform(get(restHeader + "/articles/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.valueOf(halJson)));
     }
 
     @DisplayName(("[api] 게시글에 딸린 댓글들 조회"))
@@ -56,9 +57,9 @@ public class DataRestTest {
         // given nothing
         // when request comments from the corresponding article
         // then return that json responses
-        mvc.perform(get("/api/articles/1/comments"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.valueOf(halJson)));
+        mvc.perform(get(restHeader + "/articles/1/comments"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.valueOf(halJson)));
     }
 
     @DisplayName(("[api] 총 댓글 리스트 조회"))
@@ -67,9 +68,9 @@ public class DataRestTest {
         // given nothing
         // when request comment list
         // then return that json responses
-        mvc.perform(get("/api/comments"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.valueOf(halJson)));
+        mvc.perform(get(restHeader + "/comments"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.valueOf(halJson)));
     }
 
     @DisplayName(("[api] 댓글 단건 아이디로 조회"))
@@ -78,9 +79,9 @@ public class DataRestTest {
         // given nothing
         // when request a comment by its id
         // then return that json responses
-        mvc.perform(get("/api/comments/1"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.valueOf(halJson)));
+        mvc.perform(get(restHeader + "/comments/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.valueOf(halJson)));
     }
 
     @DisplayName("[api] 회원 관련 API 는 일체 제공하지 않음")
@@ -89,11 +90,11 @@ public class DataRestTest {
         // Given nothing
         // When request UserAccount related
         // then throws exception due to security
-        mvc.perform(get("/api/userAccounts")).andExpect(status().isNotFound());
-        mvc.perform(post("/api/userAccounts")).andExpect(status().isNotFound());
-        mvc.perform(put("/api/userAccounts")).andExpect(status().isNotFound());
-        mvc.perform(patch("/api/userAccounts")).andExpect(status().isNotFound());
-        mvc.perform(delete("/api/userAccounts")).andExpect(status().isNotFound());
-        mvc.perform(head("/api/userAccounts")).andExpect(status().isNotFound());
+        mvc.perform(get(restHeader + "/userAccounts")).andExpect(status().isNotFound());
+        mvc.perform(post(restHeader + "/userAccounts")).andExpect(status().isNotFound());
+        mvc.perform(put(restHeader + "/userAccounts")).andExpect(status().isNotFound());
+        mvc.perform(patch(restHeader + "/userAccounts")).andExpect(status().isNotFound());
+        mvc.perform(delete(restHeader + "/userAccounts")).andExpect(status().isNotFound());
+        mvc.perform(head(restHeader + "/userAccounts")).andExpect(status().isNotFound());
     }
 }
