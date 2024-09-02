@@ -1,16 +1,17 @@
 package com.fastcampus.board.domain;
 
 import jakarta.persistence.*;
-import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Objects;
+
 @Getter
 @Table(indexes = {
-    @Index(columnList = "content"),
-    @Index(columnList = "createdAt"),
-    @Index(columnList = "createdBy")
+        @Index(columnList = "content"),
+        @Index(columnList = "createdAt"),
+        @Index(columnList = "createdBy")
 })
 @ToString(callSuper = true)
 @Entity
@@ -22,12 +23,13 @@ public class Comment extends AuditingFields {
 
     @Setter
     @ManyToOne(optional = false)
-    @JoinColumn(name = "username")
-    private UserAccount userAccount;
+    private Article article; // 게시글 (ID)
 
     @Setter
     @ManyToOne(optional = false)
-    private Article article; // 게시글 (ID)
+    @JoinColumn(name = "username")
+    private UserAccount userAccount;
+
 
     @Setter
     @Column(nullable = false, length = 500)
