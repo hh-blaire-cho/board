@@ -1,16 +1,19 @@
 package com.fastcampus.board.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.fastcampus.board.config.JpaConfig;
 import com.fastcampus.board.domain.Article;
 import com.fastcampus.board.domain.UserAccount;
-import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@DisplayName("JPA connection test")
 @Import(JpaConfig.class)
 @DataJpaTest
 class JpaRepositoryTest {
@@ -20,9 +23,9 @@ class JpaRepositoryTest {
     private final UserAccountRepository userRepo;
 
     public JpaRepositoryTest(
-        @Autowired ArticleRepository articleRepo,
-        @Autowired CommentRepository commentRepo,
-        @Autowired UserAccountRepository userRepo
+            @Autowired ArticleRepository articleRepo,
+            @Autowired CommentRepository commentRepo,
+            @Autowired UserAccountRepository userRepo
     ) {
         this.articleRepo = articleRepo;
         this.commentRepo = commentRepo;
@@ -30,13 +33,13 @@ class JpaRepositoryTest {
     }
 
     @Test
-    void selectTest() {
+    void test_select() {
         List<Article> articles = articleRepo.findAll();
         assertThat(articles).isNotNull().hasSize(123);
     }
 
     @Test
-    void insertTest() {
+    void test_insert() {
         long previousCount1 = articleRepo.count();
         long previousCount2 = userRepo.count();
         UserAccount user = userRepo.save(UserAccount.of("user", "pw", null, null, null));
@@ -49,7 +52,7 @@ class JpaRepositoryTest {
     }
 
     @Test
-    void updateTest() {
+    void test_update() {
         Article article = articleRepo.findById(1L).orElseThrow();
         String updatedHashtag = "#updated";
         article.setHashtag(updatedHashtag);
@@ -58,7 +61,7 @@ class JpaRepositoryTest {
     }
 
     @Test
-    void deleteTest() {
+    void test_delete() {
         Article article = articleRepo.findById(1L).orElseThrow();
         long prevArticleCount = articleRepo.count();
         long prevCommentCount = commentRepo.count();
