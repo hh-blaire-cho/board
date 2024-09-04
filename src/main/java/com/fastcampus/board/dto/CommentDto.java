@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public record CommentDto(
         Long id,
         Long articleId,
+        Long parentCommentId,
         UserAccountDto userAccountDto,
         String content,
         LocalDateTime createdAt,
@@ -20,6 +21,7 @@ public record CommentDto(
     public static CommentDto of(
             Long id,
             Long articleId,
+            Long parentCommentId,
             UserAccountDto userAccountDto,
             String content,
             LocalDateTime createdAt,
@@ -27,20 +29,22 @@ public record CommentDto(
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new CommentDto(id, articleId, userAccountDto, content, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new CommentDto(id, articleId, parentCommentId, userAccountDto, content, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     public static CommentDto of(
             Long articleId,
+            Long parentCommentId,
             UserAccountDto userAccountDto,
             String content) {
-        return new CommentDto(null, articleId, userAccountDto, content, null, null, null, null);
+        return CommentDto.of(null, articleId, parentCommentId, userAccountDto, content, null, null, null, null);
     }
 
     public static CommentDto from(Comment entity) {
         return new CommentDto(
                 entity.getId(),
                 entity.getArticle().getId(),
+                entity.getParentCommentId(),
                 UserAccountDto.from(entity.getUserAccount()),
                 entity.getContent(),
                 entity.getCreatedAt(),

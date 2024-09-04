@@ -2,7 +2,9 @@ package com.fastcampus.board.repository;
 
 import com.fastcampus.board.config.JpaConfig;
 import com.fastcampus.board.domain.Article;
+import com.fastcampus.board.domain.Comment;
 import com.fastcampus.board.domain.UserAccount;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -72,5 +75,60 @@ class JpaRepositoryTest {
         assertThat(articleRepo.count()).isEqualTo(prevArticleCount - 1);
         assertThat(commentRepo.count()).isEqualTo(prevCommentCount - deletedCommentsSize);
     }
+
+    @DisplayName("대댓글 조회 테스트")
+    @Test
+    void test_selectChildComments() {
+        // Given parent comment id as 1 (mock data 설정상 대댓글 4개를 가진 댓글은 1번 댓글임)
+        // When selecting it
+        // Then returns list of child comments
+        Optional<Comment> parentComment = commentRepo.findById(1L);
+
+        assertThat(parentComment).get()
+                .hasFieldOrPropertyWithValue("parentCommentId", null)
+                .extracting("childComments", InstanceOfAssertFactories.COLLECTION)
+                .hasSize(4);
+    }
+
+    @DisplayName("댓글에 대댓글 삽입 테스트")
+    @Test
+    void test_insertChildComment() {
+        // Given parent comment
+
+        Comment parent = commentRepo.getReferenceById(1L);
+        Comment child1 = Comment.of(parent.getArticle(), parent.getUserAccount(), "cocoment");
+        Comment child2 = Comment.of(parent.getArticle(), parent.getUserAccount(), "cocoment");
+        int originalSize = parent.getChildComments().size();
+
+        // When saving child comment
+        parent.addChildComment(child1);
+        parent.addChildComment(child2);
+        commentRepo.flush();
+
+        // Then saves it
+        assertThat(commentRepo.findById(1L)).get()
+                .hasFieldOrPropertyWithValue("parentCommentId", null)
+                .extracting("childComments", InstanceOfAssertFactories.COLLECTION)
+                .hasSize(originalSize + 2);
+    }
+
+    @DisplayName("댓글 삭제에 따른 대댓글 연계 삭제 테스트")
+    @Test
+    void test_chainDeleteTest() {
+        // Given comment having children
+        Comment parent = commentRepo.getReferenceById(1L);
+        long previousCommentCount = commentRepo.count();
+        int childCount = parent.getChildComments().size();
+
+        // When deleting parent comment
+        commentRepo.delete(parent);
+
+        // Then deletes every child
+        assertThat(commentRepo.count()).isEqualTo(previousCommentCount - childCount - 1); // 테스트 부모댓글 + 대댓글수
+    }
+
+    //TODO 스프링 시큐리티 추가하고 나서, 유저 삭제에 따른 댓글 및 대댓글 삭제 실험해보기
+//    @DisplayName("댓글 삭제와 대댓글 전체 연동 삭제 테스트 - 댓글 ID + 유저 ID")
+//    @Test
 
 }
