@@ -33,6 +33,14 @@ public class CommentService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public CommentDto getComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .map(CommentDto::from)
+                .orElseThrow(() -> new EntityNotFoundException("Cannot find that comment with given id : " + commentId));
+    }
+
+
     public void saveComment(CommentDto dto) {
         Article article;
         UserAccount userAccount;

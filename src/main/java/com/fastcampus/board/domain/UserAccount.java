@@ -1,10 +1,11 @@
 package com.fastcampus.board.domain;
 
 import jakarta.persistence.*;
-import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Objects;
 
 @Getter
 @ToString
@@ -58,10 +59,10 @@ public class UserAccount extends AuditingFields {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof UserAccount userAccount)) {
+        if (!(o instanceof UserAccount that)) {
             return false;
         }
-        return username != null && username.equals(userAccount.username);
+        return username != null && username.equals(that.getUsername());
     }
 
     @Override
