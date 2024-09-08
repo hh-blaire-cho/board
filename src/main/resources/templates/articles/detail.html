@@ -57,11 +57,11 @@
 
   <div class="row g-5">
     <section>
-      <form class="row g-3" id="comment-form">
+      <form class="row g-3 comment-form">
         <input type="hidden" class="article-id">
         <div class="col-8">
           <label for="comment-textbox" hidden>댓글</label>
-          <textarea class="form-control" id="comment-textbox" placeholder="댓글 쓰기.." rows="3" required></textarea>
+          <textarea class="form-control comment-textbox" id="comment-textbox" placeholder="댓글 쓰기.." rows="3" required></textarea>
         </div>
         <div class="col-auto">
           <label for="comment-submit" hidden>댓글 쓰기</label>
@@ -70,26 +70,48 @@
       </form>
 
       <ul id="comments" class="row col-7">
-        <li>
-          <form class="comment-form">
+        <li class="parent-comment">
+          <form class="comment-delete-form">
             <input type="hidden" class="article-id">
             <div class="row">
               <div class="col-md-10 col-lg-9">
                 <strong>default-user1</strong>
                 <small><time>1995-11-19</time></small>
-                <p>random-default-comment1</p>
+                <p class="mb-1">random-default-comment1</p>
               </div>
               <div class="col-2 mb-3">
-                <button type="submit" class="btn btn-outline-danger" id="delete-comment-button">삭제</button>
+                <button type="submit" class="btn btn-outline-danger">댓글삭제</button>
               </div>
             </div>
           </form>
-        </li>
-        <li>
-          <div>
-            <strong>random-user2</strong>
-            <small><time>1995-11-20</time></small>
-            <p>random-default-comment2</p>
+          <ul class="row me-0">
+            <li class="child-comment">
+              <form class="comment-delete-form">
+                <input type="hidden" class="article-id">
+                <div class="row">
+                  <div class="col-md-10 col-lg-9">
+                    <strong>random-user2</strong>
+                    <small><time>1995-11-20</time></small>
+                    <p class="mb-1">random-default-comment2</p>
+                  </div>
+                  <div class="col-2 mb-3 align-self-center">
+                    <button type="submit" class="btn btn-outline-danger">대댓삭제</button>
+                  </div>
+                </div>
+              </form>
+            </li>
+          </ul>
+
+          <div class="row">
+            <details class="col-md-10 col-lg-9 mb-4">
+              <summary>대댓글 달기</summary>
+              <form class="comment-form">
+                <input type="hidden" class="article-id">
+                <input type="hidden" class="parent-comment-id">
+                <textarea class="form-control comment-textbox" placeholder="댓글 쓰기.." rows="2" required></textarea>
+                <button class="form-control btn btn-primary mt-2" type="submit">대댓글 쓰기</button>
+              </form>
+            </details>
           </div>
         </li>
       </ul>

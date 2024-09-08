@@ -20,6 +20,7 @@ import static com.fastcampus.board.TestHelper.randNumb;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -40,12 +41,14 @@ class CommentControllerTest {
         this.formDataEncoder = formDataEncoder;
     }
 
-    @DisplayName("[view][POST] 새 댓글 등록 - 정상 호출")
+    @DisplayName("[view][POST] 새 댓글 & 대댓글 등록 - 정상 호출")
     @Test
     void test_createComment() throws Exception {
         // Given new comment info
         long articleId = randNumb();
-        CommentRequest commentRequest = CommentRequest.of(articleId, "content");
+        long parentId = randNumb();
+        CommentRequest commentRequest1 = CommentRequest.of(articleId, null, "content1");
+        CommentRequest commentRequest2 = CommentRequest.of(articleId, parentId, "content2");
         willDoNothing().given(commentService).saveComment(any(CommentDto.class));
 
         // When requesting
@@ -53,14 +56,26 @@ class CommentControllerTest {
         mvc.perform(
                         post("/comments/new")
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                                .content(formDataEncoder.encode(commentRequest))
+                                .content(formDataEncoder.encode(commentRequest1))
+                                .content(formDataEncoder.encode(commentRequest2))
                                 .with(csrf())
                 )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/articles/" + articleId))
                 .andExpect(redirectedUrl("/articles/" + articleId));
 
-        then(commentService).should().saveComment(any(CommentDto.class));
+
+        mvc.perform(
+                        post("/comments/new")
+                                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                .content(formDataEncoder.encode(commentRequest2))
+                                .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/articles/" + articleId))
+                .andExpect(redirectedUrl("/articles/" + articleId));
+
+        then(commentService).should(times(2)).saveComment(any(CommentDto.class));
     }
 
     @DisplayName("[view][POST] 댓글 삭제 - 정상 호출")
