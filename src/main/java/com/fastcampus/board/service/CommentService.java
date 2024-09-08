@@ -51,7 +51,7 @@ public class CommentService {
             return;
         }
 
-        //게시글 검사 후 사용자 존재여부 검사
+        //게시글 존재여부 검사 후 사용자 존재여부 검사
         try {
             userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().username());
         } catch (EntityNotFoundException e) {
@@ -60,7 +60,13 @@ public class CommentService {
         }
 
         Comment comment = dto.toEntity(article, userAccount);
-        commentRepository.save(comment);
+
+        if (dto.parentCommentId() != null) {
+            Comment parentComment = commentRepository.getReferenceById(dto.parentCommentId());
+            parentComment.addChildComment(comment); // child.setParentCommentId 도 같이 해줌
+        } else {
+            commentRepository.save(comment); // 대댓글일떈 레포에 신규 저장 안함
+        }
     }
 
     public void updateComment(CommentDto dto) {
