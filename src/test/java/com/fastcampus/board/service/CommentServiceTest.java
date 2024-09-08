@@ -15,12 +15,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.fastcampus.board.TestHelper.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
@@ -87,6 +89,40 @@ class CommentServiceTest {
         then(commentRepo).should().findByArticle_Id(articleId);
     }
 
+    @DisplayName("게시글 아이디 조회 시, 딸린 댓글 리스트 반환 - 대댓글")
+    @Test
+    void test_searchCommentsUsingArticleId_v2() {
+        // Given
+        Comment parent = Comment.of(article, userAccount, "parentContent");
+        Comment child1 = Comment.of(article, userAccount, "childContent1");
+        Comment child2 = Comment.of(article, userAccount, "childContent2");
+        long articleId = randNumb();
+        long parentId = randNumb();
+        long childId1 = randNumb();
+        long childId2 = randNumb();
+        ReflectionTestUtils.setField(article, "id", articleId);
+        ReflectionTestUtils.setField(parent, "id", parentId);
+        ReflectionTestUtils.setField(child1, "id", childId1);
+        ReflectionTestUtils.setField(child2, "id", childId2);
+        parent.addChildComment(child1);
+        parent.addChildComment(child2);
+        given(commentRepo.findByArticle_Id(articleId)).willReturn(List.of(parent, child1, child2));
+
+        // When search list of comments from that corresponding article
+        List<CommentDto> actual = sut.searchComments(articleId);
+
+        // Then returns that well
+        assertThat(actual).hasSize(3);
+        assertThat(actual)
+                .extracting("id", "articleId", "parentCommentId", "content")
+                .containsExactlyInAnyOrder(
+                        tuple(parentId, articleId, null, "parentContent"),
+                        tuple(childId1, articleId, parentId, "childContent1"),
+                        tuple(childId2, articleId, parentId, "childContent2")
+                );
+        then(commentRepo).should().findByArticle_Id(articleId);
+    }
+
     @DisplayName("댓글 정보 입력 시, 댓글 저장")
     @Test
     void test_savingComment() {
@@ -103,6 +139,29 @@ class CommentServiceTest {
         then(articleRepo).should().getReferenceById(dto.articleId());
         then(userAccountRepo).should().getReferenceById(dto.userAccountDto().username());
         then(commentRepo).should().save(any(Comment.class));
+        then(commentRepo).should(never()).getReferenceById(anyLong());
+    }
+
+    @DisplayName("대댓글 정보 입력 시, (부모 댓글 ID 필수), 대댓글 저장")
+    @Test
+    void test_savingChildComment() {
+        // Given child comment info (parentCommentId must)
+        Long parentCommentId = randNumb();
+        Comment parent = Comment.of(article, userAccount, "parentContent");
+        CommentDto child = createCommentDto(randNumb(), randNumb(), parentCommentId);
+        given(articleRepo.getReferenceById(child.articleId())).willReturn(article);
+        given(userAccountRepo.getReferenceById(child.userAccountDto().username())).willReturn(userAccount);
+        given(commentRepo.getReferenceById(child.parentCommentId())).willReturn(parent);
+
+        // When try saving
+        sut.saveComment(child);
+
+        // Then
+        assertThat(child.parentCommentId()).isNotNull();
+        then(articleRepo).should().getReferenceById(child.articleId());
+        then(userAccountRepo).should().getReferenceById(child.userAccountDto().username());
+        then(commentRepo).should(never()).save(any(Comment.class)); // 대댓글일떈 레포에 신규 저장 안함
+        then(commentRepo).should().getReferenceById(child.parentCommentId());
     }
 
     @DisplayName("연계 게시글 정보가 없는데, 댓글 저장 시도 시, 경고 로그만 찍고 끝")
