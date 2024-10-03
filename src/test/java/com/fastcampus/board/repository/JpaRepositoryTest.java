@@ -1,23 +1,25 @@
 package com.fastcampus.board.repository;
 
-import com.fastcampus.board.config.JpaConfig;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fastcampus.board.domain.Article;
 import com.fastcampus.board.domain.Comment;
 import com.fastcampus.board.domain.UserAccount;
+import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @DisplayName("JPA connection test")
-@Import(JpaConfig.class)
+@Import(JpaRepositoryTest.TestJpaConfig.class)
 @DataJpaTest
 class JpaRepositoryTest {
 
@@ -130,5 +132,15 @@ class JpaRepositoryTest {
     //TODO 스프링 시큐리티 추가하고 나서, 유저 삭제에 따른 댓글 및 대댓글 삭제 실험해보기
 //    @DisplayName("댓글 삭제와 대댓글 전체 연동 삭제 테스트 - 댓글 ID + 유저 ID")
 //    @Test
+
+    @EnableJpaAuditing
+    @TestConfiguration
+    public static class TestJpaConfig {
+
+        @Bean
+        public AuditorAware<String> auditorAware() {
+            return () -> Optional.of("jpa-test-user");
+        }
+    }
 
 }
