@@ -25,7 +25,7 @@ public class SecurityConfig {
                 // 그 외의 모든 요청은 인증 필요
                 .anyRequest().authenticated()
             )
-            .formLogin(form -> form.loginPage("/login").permitAll()) // 폼로그인 설정 & 로그인 페이지 접근 허용
+            .formLogin(form -> form.permitAll()) // 폼로그인 설정 & 로그인 페이지 접근 허용
             .logout(logout -> logout.logoutSuccessUrl("/").permitAll()) // 로그아웃 설정 및 로그아웃 성공시 리다이렉션 URL 넣고 접근 허용함
             .csrf(x -> x.disable());    // Disable CSRF(Cross site Request forgery) protection
 
