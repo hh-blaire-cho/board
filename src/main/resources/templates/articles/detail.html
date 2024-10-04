@@ -47,23 +47,15 @@
       </article>
     </div>
 
-  <div class="row g-5" id="article-buttons">
-    <div class="pb-5 d-grid gap-2 d-md-block">
-      <!-- 삭제 및 수정 버튼을 위한 폼 -->
-      <form id="delete-article-form" th:action="'/articles/' + *{id} + '/delete'" method="post" class="d-inline">
-        <a class="btn btn-success me-md-2" role="button" id="update-article" th:href="'/articles/' + *{id} + '/form'">수정</a>
+    <div class="pb-5 d-grid gap-2 d-md-block" id="article-buttons"> <!-- 수정/삭제/좋아요 버튼 -->
+      <a class="btn btn-success me-md-2" role="button" id="update-article">수정</a>
+      <form id="delete-article-form" method="post" class="d-inline">
         <button class="btn btn-danger me-md-2" type="submit">삭제</button>
       </form>
-
-      <!-- 좋아요 버튼을 위한 별도의 폼 -->
-      <form id="like-article-form" th:action="'/articles/' + *{id} + '/like'" method="post" class="d-inline">
-        <button class="btn btn-info" type="submit" id="like-article">
-          좋아요 (<span th:text="${likeCount}">0</span>)
-        </button>
+      <form id="like-article-form" method="post" class="d-inline">
+        <button class="btn btn-info me-md-2" type="submit">좋아요 (<span th:text="${likeCount}">0</span>)</button>
       </form>
     </div>
-  </div>
-
 
 
   <div class="row g-5">
