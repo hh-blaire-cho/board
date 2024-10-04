@@ -1,0 +1,6 @@
+/* article-content ID에 대한 스타일 추가 */
+#article-content {
+  word-wrap: break-word; /* 긴 단어가 있으면 자동으로 줄바꿈 */
+  word-break: break-all; /* 단어가 길 경우 적절한 위치에서 줄을 끊음 */
+  white-space: pre-wrap; /* 줄바꿈(\n)을 그대로 반영하면서, 긴 문장을 줄바꿈 */
+}
