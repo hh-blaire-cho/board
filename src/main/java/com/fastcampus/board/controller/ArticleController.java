@@ -60,6 +60,7 @@ public class ArticleController {
         map.addAttribute("article", article);
         map.addAttribute("comments", article.commentResponses());
         map.addAttribute("totalCount", articleService.getArticlesCount());
+        map.addAttribute("likeCount", articleService.getLikeCount(articleId)); // likeCount 추가
 
         return "articles/detail";
     }
@@ -113,6 +114,16 @@ public class ArticleController {
         articleService.deleteArticle(articleId);
 
         return "redirect:/articles";
+    }
+
+    // 좋아요 토글 기능
+    @PostMapping("/{articleId}/like")
+    public String toggleArticleLike(
+        @PathVariable Long articleId,
+        @AuthenticationPrincipal BoardPrincipal boardPrincipal
+    ) {
+        articleService.toggleLike(articleId, boardPrincipal.getUsername());
+        return "redirect:/articles/" + articleId;
     }
 
 }

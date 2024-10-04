@@ -7,7 +7,7 @@ public record LikeDto(
     Long id,
     UserAccountDto userAccountDto,
     ArticleDto articleDto,
-    CommentDto commentDto,
+//    CommentDto commentDto,
     Timestamp createdAt,
     Timestamp updatedAt,
     Timestamp deletedAt
@@ -17,12 +17,12 @@ public record LikeDto(
         Long id,
         UserAccountDto userAccountDto,
         ArticleDto articleDto,
-        CommentDto commentDto,
+//        CommentDto commentDto,
         Timestamp createdAt,
         Timestamp updatedAt,
         Timestamp deletedAt
     ) {
-        return new LikeDto(id, userAccountDto, articleDto, commentDto, createdAt, updatedAt, deletedAt);
+        return new LikeDto(id, userAccountDto, articleDto, createdAt, updatedAt, deletedAt);
     }
 
     public static LikeDto of(
@@ -30,7 +30,7 @@ public record LikeDto(
         ArticleDto articleDto,
         CommentDto commentDto
     ) {
-        return new LikeDto(null, userAccountDto, articleDto, commentDto, null, null, null);
+        return new LikeDto(null, userAccountDto, articleDto, null, null, null);
     }
 
     public static LikeDto from(Like entity) {
@@ -38,7 +38,7 @@ public record LikeDto(
             entity.getId(),
             UserAccountDto.from(entity.getUserAccount()),
             ArticleDto.from(entity.getArticle()),
-            CommentDto.from(entity.getComment()),
+//            CommentDto.from(entity.getComment()),
             entity.getCreatedAt(),
             entity.getUpdatedAt(),
             entity.getDeletedAt()

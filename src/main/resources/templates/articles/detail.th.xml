@@ -16,7 +16,16 @@
       <attr sel="#delete-article-form" th:action="'/articles/' + *{id} + '/delete'" th:method="post">
         <attr sel="#update-article" th:href="'/articles/' + *{id} + '/form'" />
       </attr>
+      <attr sel="#like-article-form" th:action="'/articles/' + *{id} + '/like'" th:method="post">
+        <button class="btn btn-info me-md-2" type="submit" id="like-article">
+          좋아요 (<span th:text="${likeCount}">0</span>)
+        </button>
+      </attr>
     </attr>
+  </attr>
+
+
+
 
     <attr sel=".article-id" th:name="articleId" th:value="*{id}" />
     <attr sel=".comment-form" th:action="@{/comments/new}" th:method="post">
