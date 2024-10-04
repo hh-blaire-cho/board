@@ -19,7 +19,7 @@ public record ArticleWithAllResponse(
         String hashtag,
         LocalDateTime createdAt,
         String email,
-        String nickname,
+        String username,
         Set<CommentResponse> commentResponses,
         Set<LikeResponse> likeResponses
 ) {
@@ -31,20 +31,15 @@ public record ArticleWithAllResponse(
         String hashtag,
         LocalDateTime createdAt,
         String email,
-        String nickname,
+        String username,
         Set<CommentResponse> commentResponses,
         Set<LikeResponse> likeResponses
     ) {
         return new ArticleWithAllResponse(id, title, content, hashtag,
-            createdAt, email, nickname, commentResponses, likeResponses);
+            createdAt, email, username, commentResponses, likeResponses);
     }
 
     public static ArticleWithAllResponse from(ArticleWithAllDto dto) {
-        String nickname = dto.userAccountDto().nickname();
-        if (nickname == null || nickname.isBlank()) {
-            nickname = dto.userAccountDto().username();
-        }
-
         return new ArticleWithAllResponse(
             dto.id(),
             dto.title(),
@@ -52,7 +47,7 @@ public record ArticleWithAllResponse(
             dto.hashtag(),
             dto.createdAt(),
             dto.userAccountDto().email(),
-            nickname,
+            dto.userAccountDto().username(),
             organizeChildComments(dto.commentDtos()),
             dto.likeDtos().stream()
                 .map(LikeResponse::from)
