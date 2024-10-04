@@ -1,13 +1,18 @@
 package com.fastcampus.board.service;
 
 import com.fastcampus.board.domain.Article;
+import com.fastcampus.board.domain.Like;
 import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.domain.constant.SearchType;
 import com.fastcampus.board.dto.ArticleDto;
 import com.fastcampus.board.dto.ArticleWithCommentsDto;
+import com.fastcampus.board.dto.LikeDto;
 import com.fastcampus.board.repository.ArticleRepository;
+import com.fastcampus.board.repository.LikeRepository;
 import com.fastcampus.board.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+    private final LikeRepository likeRepository;
     private final UserAccountRepository userAccountRepository;
 
     @Transactional(readOnly = true)
@@ -84,5 +90,37 @@ public class ArticleService {
 
     public long getArticlesCount() {
         return articleRepository.count();
+    }
+
+    // 이제부터는 CRUD가 아닌 좋아요에 대한 기능들
+    @Transactional
+    public void toggleLike(Long postId, String username) {
+        Article article = articleRepository.findById(postId).orElseThrow(() ->
+            new RuntimeException(String.format("cannot find post id: %d", postId)));
+
+        UserAccount userAccount = userAccountRepository.findByUsername(username).orElseThrow(() ->
+            new RuntimeException(String.format("cannot find user name: %d", postId)));
+
+        Optional<Like> likeEntity = likeRepository.findByUserAccountAndArticle(userAccount, article);
+        if (likeEntity.isPresent()) {
+            likeRepository.delete(likeEntity.get());
+        } else {
+            likeRepository.save(Like.of(article, userAccount));
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<LikeDto> getLikes(Long articleId) {
+        Article article = articleRepository.findById(articleId).orElseThrow(() ->
+            new RuntimeException(String.format("cannot find post id: %d", articleId)));
+
+        return likeRepository.findAllByArticle(article).stream().map(LikeDto::from).toList();
+    }
+
+    public int getLikeCount(Long articleId) {
+        Article article = articleRepository.findById(articleId).orElseThrow(() ->
+            new RuntimeException(String.format("cannot find post id: %d", articleId)));
+
+        return likeRepository.countByArticle(article);
     }
 }
