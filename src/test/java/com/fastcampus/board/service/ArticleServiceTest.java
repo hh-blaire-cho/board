@@ -1,13 +1,31 @@
 package com.fastcampus.board.service;
 
+import static com.fastcampus.board.TestHelper.USER_ACCOUNT_DTO;
+import static com.fastcampus.board.TestHelper.createArticleDto;
+import static com.fastcampus.board.TestHelper.randNumb;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.never;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.BDDMockito.willDoNothing;
+
 import com.fastcampus.board.domain.Article;
 import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.domain.constant.SearchType;
 import com.fastcampus.board.dto.ArticleDto;
-import com.fastcampus.board.dto.ArticleWithCommentsDto;
+import com.fastcampus.board.dto.ArticleWithAllDto;
 import com.fastcampus.board.repository.ArticleRepository;
 import com.fastcampus.board.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,16 +36,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.fastcampus.board.TestHelper.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
 
 @DisplayName("비즈니스 로직 - 게시글")
 @ExtendWith(MockitoExtension.class) //이렇게 해야, 굳이 Application 을 안켜서 가벼워짐.
@@ -84,7 +92,7 @@ class ArticleServiceTest {
         given(articleRepo.findById(articleId)).willReturn(Optional.of(article));
 
         // When searching that articleWithComments
-        ArticleWithCommentsDto articles = sut.getArticleWithComments(articleId);
+        ArticleWithAllDto articles = sut.getArticleWithComments(articleId);
 
         // Then returns that specific article
         assertThat(articles).isNotNull();

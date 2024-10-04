@@ -1,18 +1,18 @@
 package com.fastcampus.board.dto.response;
 
 
-import com.fastcampus.board.dto.ArticleWithCommentsDto;
+import com.fastcampus.board.dto.ArticleWithAllDto;
 import com.fastcampus.board.dto.CommentDto;
-
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public record ArticleWithCommentsResponse(
+public record ArticleWithAllResponse(
         Long id,
         String title,
         String content,
@@ -20,36 +20,43 @@ public record ArticleWithCommentsResponse(
         LocalDateTime createdAt,
         String email,
         String nickname,
-        Set<CommentResponse> commentResponses
+        Set<CommentResponse> commentResponses,
+        Set<LikeResponse> likeResponses
 ) {
 
-    public static ArticleWithCommentsResponse of(
-            Long id,
-            String title,
-            String content,
-            String hashtag,
-            LocalDateTime createdAt,
-            String email,
-            String nickname,
-            Set<CommentResponse> commentResponses) {
-        return new ArticleWithCommentsResponse(id, title, content, hashtag, createdAt, email, nickname, commentResponses);
+    public static ArticleWithAllResponse of(
+        Long id,
+        String title,
+        String content,
+        String hashtag,
+        LocalDateTime createdAt,
+        String email,
+        String nickname,
+        Set<CommentResponse> commentResponses,
+        Set<LikeResponse> likeResponses
+    ) {
+        return new ArticleWithAllResponse(id, title, content, hashtag,
+            createdAt, email, nickname, commentResponses, likeResponses);
     }
 
-    public static ArticleWithCommentsResponse from(ArticleWithCommentsDto dto) {
+    public static ArticleWithAllResponse from(ArticleWithAllDto dto) {
         String nickname = dto.userAccountDto().nickname();
         if (nickname == null || nickname.isBlank()) {
             nickname = dto.userAccountDto().username();
         }
 
-        return new ArticleWithCommentsResponse(
-                dto.id(),
-                dto.title(),
-                dto.content(),
-                dto.hashtag(),
-                dto.createdAt(),
-                dto.userAccountDto().email(),
-                nickname,
-                organizeChildComments(dto.commentDtos())
+        return new ArticleWithAllResponse(
+            dto.id(),
+            dto.title(),
+            dto.content(),
+            dto.hashtag(),
+            dto.createdAt(),
+            dto.userAccountDto().email(),
+            nickname,
+            organizeChildComments(dto.commentDtos()),
+            dto.likeDtos().stream()
+                .map(LikeResponse::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
         );
     }
 

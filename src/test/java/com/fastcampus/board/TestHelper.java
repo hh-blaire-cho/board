@@ -1,8 +1,9 @@
 package com.fastcampus.board;
 
 import com.fastcampus.board.dto.ArticleDto;
-import com.fastcampus.board.dto.ArticleWithCommentsDto;
+import com.fastcampus.board.dto.ArticleWithAllDto;
 import com.fastcampus.board.dto.CommentDto;
+import com.fastcampus.board.dto.LikeDto;
 import com.fastcampus.board.dto.UserAccountDto;
 
 import java.time.LocalDateTime;
@@ -44,12 +45,14 @@ public class TestHelper {
         return createCommentDto(randNumb(), randNumb(), null, randString(5), now());
     }
 
-    public static ArticleWithCommentsDto createArticleWithCommentsDto() {
-        return createArticleWithCommentsDto(randNumb(), randString(5), randString(5), randString(5), Set.of());
+    public static ArticleWithAllDto createArticleWithCommentsDto() {
+        return createArticleWithCommentsDto(randNumb(), randString(5), randString(5),
+            randString(5), Set.of(), Set.of());
     }
 
-    public static ArticleWithCommentsDto createArticleWithCommentsDto(Long id, String title, String content, String hashtag, Set<CommentDto> dtos) {
-        return ArticleWithCommentsDto.of(id, USER_ACCOUNT_DTO, dtos, title, content, hashtag,
+    public static ArticleWithAllDto createArticleWithCommentsDto(Long id, String title, String content,
+        String hashtag, Set<CommentDto> commentDtos, Set<LikeDto> likeDtos) {
+        return ArticleWithAllDto.of(id, USER_ACCOUNT_DTO, commentDtos, likeDtos, title, content, hashtag,
                 now(), randString(5), now(), randString(5));
     }
 

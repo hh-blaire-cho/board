@@ -5,7 +5,7 @@ import com.fastcampus.board.domain.Like;
 import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.domain.constant.SearchType;
 import com.fastcampus.board.dto.ArticleDto;
-import com.fastcampus.board.dto.ArticleWithCommentsDto;
+import com.fastcampus.board.dto.ArticleWithAllDto;
 import com.fastcampus.board.dto.LikeDto;
 import com.fastcampus.board.repository.ArticleRepository;
 import com.fastcampus.board.repository.LikeRepository;
@@ -75,9 +75,9 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public ArticleWithCommentsDto getArticleWithComments(Long articleId) {
+    public ArticleWithAllDto getArticleWithComments(Long articleId) {
         return articleRepository.findById(articleId)
-                .map(ArticleWithCommentsDto::from)
+            .map(ArticleWithAllDto::from)
                 .orElseThrow(() -> new EntityNotFoundException("Cannot find that article with given id : " + articleId));
     }
 

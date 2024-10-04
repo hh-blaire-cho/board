@@ -1,21 +1,23 @@
 package com.fastcampus.board.dto.response;
 
-import com.fastcampus.board.dto.ArticleWithCommentsDto;
-import com.fastcampus.board.dto.CommentDto;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static com.fastcampus.board.TestHelper.createArticleWithCommentsDto;
+import static com.fastcampus.board.TestHelper.createCommentDto;
+import static com.fastcampus.board.TestHelper.randNumb;
+import static com.fastcampus.board.TestHelper.randString;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.fastcampus.board.dto.ArticleWithAllDto;
+import com.fastcampus.board.dto.CommentDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.fastcampus.board.TestHelper.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 @DisplayName("DTO - 댓글을 포함한 게시글 응답 테스트")
-class ArticleWithCommentsResponseTest {
+class ArticleWithAllResponseTest {
 
     @DisplayName("게시글댓글dto 정렬해서 api로 변환")
     @Test
@@ -36,9 +38,9 @@ class ArticleWithCommentsResponseTest {
                 createCommentDto(7L, articleId, null, content, now.plusDays(2L)),
                 createCommentDto(8L, articleId, null, content, now.plusDays(7L))
         );
-        ArticleWithCommentsDto input = createArticleWithCommentsDto(1L, "", "", "", commentDtos);
+        ArticleWithAllDto input = createArticleWithCommentsDto(1L, "", "", "", commentDtos, Set.of());
 
-        List<Long> actualIds = ArticleWithCommentsResponse.from(input).commentResponses().stream()
+        List<Long> actualIds = ArticleWithAllResponse.from(input).commentResponses().stream()
                 .map(CommentResponse::id).collect(Collectors.toList());
         List<Long> expectedIds = List.of(8L, 5L, 6L, 3L, 7L, 2L, 1L, 4L);
 
@@ -64,9 +66,9 @@ class ArticleWithCommentsResponseTest {
                 createCommentDto(8L, articleId, 6L, content, now.plusDays(7L))
         );
 
-        ArticleWithCommentsDto input = createArticleWithCommentsDto(1L, "", "", "", commentDtos);
+        ArticleWithAllDto input = createArticleWithCommentsDto(1L, "", "", "", commentDtos, Set.of());
 
-        Set<CommentResponse> actual = ArticleWithCommentsResponse.from(input).commentResponses();
+        Set<CommentResponse> actual = ArticleWithAllResponse.from(input).commentResponses();
 
         // Verify the main list of comment IDs
         assertThat(actual.stream().map(CommentResponse::id).collect(Collectors.toList()))

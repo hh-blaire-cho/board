@@ -5,7 +5,7 @@ import com.fastcampus.board.domain.constant.FormStatus;
 import com.fastcampus.board.domain.constant.SearchType;
 import com.fastcampus.board.dto.request.ArticleRequest;
 import com.fastcampus.board.dto.response.ArticleResponse;
-import com.fastcampus.board.dto.response.ArticleWithCommentsResponse;
+import com.fastcampus.board.dto.response.ArticleWithAllResponse;
 import com.fastcampus.board.dto.security.BoardPrincipal;
 import com.fastcampus.board.service.ArticleService;
 import com.fastcampus.board.service.PaginationService;
@@ -56,7 +56,7 @@ public class ArticleController {
     @Operation(summary = "display the selected article")
     @GetMapping("/{articleId}")
     public String article(@PathVariable Long articleId, ModelMap map) {
-        ArticleWithCommentsResponse article = ArticleWithCommentsResponse.from(articleService.getArticleWithComments(articleId));
+        ArticleWithAllResponse article = ArticleWithAllResponse.from(articleService.getArticleWithComments(articleId));
         map.addAttribute("article", article);
         map.addAttribute("comments", article.commentResponses());
         map.addAttribute("totalCount", articleService.getArticlesCount());
