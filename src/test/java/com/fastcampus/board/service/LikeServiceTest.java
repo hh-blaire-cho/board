@@ -61,7 +61,7 @@ class LikeServiceTest {
         String username = "randomUsername";
         UserAccount userAccount = USER_ACCOUNT_DTO.toEntity();
         Article article = Article.of(userAccount, "title", "content", "#hash");
-        Like likeEntity = Like.of(article, userAccount);
+        Like likeEntity = Like.createForArticle(article, userAccount);
 
         when(articleRepo.findById(articleId)).thenReturn(Optional.of(article));
         when(userRepo.findByUsername(username)).thenReturn(Optional.of(userAccount));

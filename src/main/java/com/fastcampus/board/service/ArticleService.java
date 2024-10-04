@@ -105,7 +105,7 @@ public class ArticleService {
         if (likeEntity.isPresent()) {
             likeRepository.delete(likeEntity.get());
         } else {
-            likeRepository.save(Like.of(article, userAccount));
+            likeRepository.save(Like.createForArticle(article, userAccount));
         }
     }
 

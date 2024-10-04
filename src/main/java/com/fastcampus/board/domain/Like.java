@@ -52,15 +52,28 @@ public class Like {
     protected Like() {
     }
 
-    private Like(Article article, UserAccount userAccount) {
+    // Private constructor
+    private Like(Article article, Comment comment, UserAccount userAccount) {
         this.article = article;
+        this.comment = comment;
         this.userAccount = userAccount;
     }
 
-    public static Like of(Article article, UserAccount user) {
-        return new Like(article, user);
+    // Factory method to create Like for Article
+    public static Like createForArticle(Article article, UserAccount userAccount) {
+        if (article == null || userAccount == null) {
+            throw new IllegalArgumentException("Article and UserAccount must not be null");
+        }
+        return new Like(article, null, userAccount);
     }
 
+    // Factory method to create Like for Comment
+    public static Like createForComment(Comment comment, UserAccount userAccount) {
+        if (comment == null || userAccount == null) {
+            throw new IllegalArgumentException("Comment and UserAccount must not be null");
+        }
+        return new Like(null, comment, userAccount);
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) {
