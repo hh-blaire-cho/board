@@ -70,52 +70,56 @@
         </form>
       </section>
 
+      <!--댓글 및 대댓글 정보 확인, 수정, 삭제, 좋아요 -->
       <section>
+        <!--li와 짝궁. 댓글이 리스트 형태로 구조화되어 있음을 명확하게 나타내는 역할 -->
         <ul id="comments" class="row col-7">
-          <li class="parent-comment">
-            <form class="comment-delete-form">
+          <li class="parent-comment"> <!-- 댓글 리스트 시작-->
+            <!--댓글 삭제 버튼 및 정보-->
+            <form class="parent-comment-delete-form">
               <input type="hidden" class="article-id">
               <div class="row">
                 <div class="col-md-10 col-lg-9">
-                  <strong>default-user1</strong>
+                  <strong>default-parent-commenter</strong>
                   <small><time>1995-11-19</time></small>
-                  <p class="mb-1">random-default-comment1</p>
+                  <p class="mb-1">random-default-parent-comment</p>
                 </div>
                 <div class="col-2 mb-3">
                   <button type="submit" class="btn btn-outline-danger">댓글삭제</button>
                 </div>
               </div>
             </form>
+            <!--li와 짝궁. 대댓글이 리스트 형태로 구조화되어 있음을 명확하게 나타내는 역할 -->
             <ul class="row me-0">
-              <li class="child-comment">
-                <form class="comment-delete-form">
+              <li class="child-comment"> <!-- 대댓글 리스트 시작-->
+                <!--대댓글 삭제 버튼 및 정보-->
+                <form class="child-comment-delete-form">
                   <input type="hidden" class="article-id">
                   <div class="row">
                     <div class="col-md-10 col-lg-9">
-                      <strong>random-user2</strong>
+                      <strong>default-child-commenter</strong>
                       <small><time>1995-11-20</time></small>
-                      <p class="mb-1">random-default-comment2</p>
+                      <p class="mb-1">random-default-child-comment</p>
                     </div>
-                    <div class="col-2 mb-3 align-self-center">
+                    <div class="col-2 mb-3">
                       <button type="submit" class="btn btn-outline-danger">대댓삭제</button>
                     </div>
                   </div>
                 </form>
-              </li>
+              </li>  <!-- 대댓글 리스트 끝-->
             </ul>
-
             <div class="row">
               <details class="col-md-10 col-lg-9 mb-4">
-                <summary>대댓글 달기</summary>
+                <summary>대댓글쓰기</summary>
                 <form class="comment-form">
                   <input type="hidden" class="article-id">
                   <input type="hidden" class="parent-comment-id">
-                  <textarea class="form-control comment-textbox" placeholder="댓글 쓰기.." rows="2" required></textarea>
-                  <button class="form-control btn btn-primary mt-2" type="submit">대댓글 쓰기</button>
+                  <textarea class="form-control comment-textbox" placeholder="대댓글 내용을 입력하세요" rows="2" required></textarea>
+                  <button class="form-control btn btn-primary mt-2" type="submit">대댓글쓰기</button>
                 </form>
               </details>
             </div>
-          </li>
+          </li> <!-- 댓글 리스트 끝-->
         </ul>
       </section>
     </div>

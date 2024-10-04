@@ -24,14 +24,14 @@
 
   <attr sel="#comments" th:remove="all-but-first">
     <attr sel=".parent-comment[0]" th:each=" comment : ${comments}">
-      <attr sel=".comment-delete-form" th:action="'/comments/' + ${comment.id} + '/delete'" th:method="post">
+      <attr sel=".parent-comment-delete-form" th:action="'/comments/' + ${comment.id} + '/delete'" th:method="post">
         <attr sel="div/strong" th:text="${comment.username}" />
         <attr sel="div/small/time" th:datetime="${comment.createdAt}" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm:ss')}" />
         <attr sel="div/p" th:text="${comment.content}" />
       </attr>
       <attr sel="ul" th:if="${comment.childComments.size() > 0}" th:remove="all-but-first">
         <attr sel=".child-comment[0]" th:each="childComment : ${comment.childComments}">
-          <attr sel=".comment-delete-form" th:action="'/comments/' + ${childComment.id} + '/delete'" th:method="post">
+          <attr sel=".child-comment-delete-form" th:action="'/comments/' + ${childComment.id} + '/delete'" th:method="post">
             <attr sel="div/strong" th:text="${childComment.username}" />
             <attr sel="div/small/time" th:datetime="${childComment.createdAt}" th:text="${#temporals.format(childComment.createdAt, 'yyyy-MM-dd HH:mm:ss')}" />
             <attr sel="div/p" th:text="${childComment.content}" />
@@ -41,7 +41,6 @@
     </attr>
     <attr sel=".parent-comment-id" th:name="parentCommentId" th:value="${comment.id}" />
   </attr>
-
   <attr sel="#pagination">
     <attr sel="ul">
       <attr sel="li[0]/a"
