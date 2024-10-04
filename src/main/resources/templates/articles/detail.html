@@ -21,7 +21,7 @@
   </header>
 
   <main class="container" id="article-main">
-    <header class="py-5 text-center" id="article-header">
+    <header class="py-5 text-start" id="article-header">
       <h1>첫번째 글 제목</h1>
     </header>
 
@@ -46,16 +46,16 @@
     </div>
 
     <div class="pb-5 d-grid gap-2 d-md-block" id="article-buttons"> <!-- 수정/삭제/좋아요 버튼 -->
-      <a class="btn btn-success me-md-2" role="button" id="update-article">수정</a>
+      <a class="btn btn-warning me-md-2" role="button" id="update-article">수정</a>
       <form id="delete-article-form" method="post" class="d-inline">
         <button class="btn btn-danger me-md-2" type="submit">삭제</button>
       </form>
       <form id="like-article-form" method="post" class="d-inline">
-        <button class="btn btn-info me-md-2" type="submit">좋아요 (<span th:text="${likeCount}">0</span>)</button>
+        <button class="btn btn-info me-md-2" type="submit">👍 (<span th:text="${likeCount}">0</span>)</button>
       </form>
     </div>
 
-    <div class="row g-5">
+    <div class="row" style="width: 90%;">
       <section>
         <form class="row g-3 comment-form mb-4">
           <input type="hidden" class="article-id">
@@ -73,8 +73,8 @@
       <!--댓글 및 대댓글 정보 확인, 수정, 삭제, 좋아요 -->
       <section>
         <!--li와 짝궁. 댓글이 리스트 형태로 구조화되어 있음을 명확하게 나타내는 역할 -->
-        <ul id="comments" class="row col-7">
-          <li class="parent-comment"> <!-- 댓글 리스트 시작-->
+        <ul id="comments" class="row" style="width: 90%;">
+        <li class="parent-comment"> <!-- 댓글 리스트 시작-->
             <!--댓글 삭제 버튼 및 정보-->
             <form class="parent-comment-delete-form">
               <input type="hidden" class="article-id">
@@ -84,8 +84,14 @@
                   <small><time>1995-11-19</time></small>
                   <p class="mb-1">random-default-parent-comment</p>
                 </div>
-                <div class="col-2 mb-3">
-                  <button type="submit" class="btn btn-outline-danger">댓글삭제</button>
+                <div class="col-3 mb-3" id="comment-buttons"> <!-- 수정/삭제/좋아요 버튼 -->
+                  <a class="btn btn-warning me-md-2" role="button" id="update-comment">수정</a>
+                  <form id="delete-comment-form" method="post" class="d-inline">
+                    <button class="btn btn-danger me-md-2" type="submit">삭제</button>
+                  </form>
+                  <form id="like-comment-form" method="post" class="d-inline">
+                    <button class="btn btn-info me-md-2" type="submit">👍 (<span th:text="${likeCount}">0</span>)</button>
+                  </form>
                 </div>
               </div>
             </form>
@@ -101,8 +107,14 @@
                       <small><time>1995-11-20</time></small>
                       <p class="mb-1">random-default-child-comment</p>
                     </div>
-                    <div class="col-2 mb-3">
-                      <button type="submit" class="btn btn-outline-danger">대댓삭제</button>
+                    <div class="col-3 mb-3" id="child-comment-buttons"> <!-- 수정/삭제/좋아요 버튼 -->
+                      <a class="btn btn-warning me-md-2" role="button" id="update-child-comment">수정</a>
+                      <form id="delete-child-comment-form" method="post" class="d-inline">
+                        <button class="btn btn-danger me-md-2" type="submit">삭제</button>
+                      </form>
+                      <form id="like-child-comment-form" method="post" class="d-inline">
+                        <button class="btn btn-info me-md-2" type="submit">👍 (<span th:text="${likeCount}">0</span>)</button>
+                      </form>
                     </div>
                   </div>
                 </form>
