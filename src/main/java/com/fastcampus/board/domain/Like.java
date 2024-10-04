@@ -32,12 +32,12 @@ public class Like {
 
     @Setter
     @JoinColumn(name = "article_id")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Article article; // 게시글 (ID)
 
     @Setter
     @JoinColumn(name = "comment_id")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Comment comment; // 댓글 (ID)
 
     @Column(name = "created_at")
