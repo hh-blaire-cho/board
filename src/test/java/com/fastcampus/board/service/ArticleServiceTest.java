@@ -1,5 +1,22 @@
 package com.fastcampus.board.service;
 
+import static com.fastcampus.board.TestHelper.USER_ACCOUNT_DTO;
+import static com.fastcampus.board.TestHelper.createArticleDto;
+import static com.fastcampus.board.TestHelper.randNumb;
+import static com.fastcampus.board.TestHelper.randString;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.never;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.BDDMockito.willDoNothing;
+
 import com.fastcampus.board.domain.Article;
 import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.domain.constant.SearchType;
@@ -8,6 +25,8 @@ import com.fastcampus.board.dto.ArticleWithCommentsDto;
 import com.fastcampus.board.repository.ArticleRepository;
 import com.fastcampus.board.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,16 +37,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.fastcampus.board.TestHelper.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
 
 @DisplayName("비즈니스 로직 - 게시글")
 @ExtendWith(MockitoExtension.class) //이렇게 해야, 굳이 Application 을 안켜서 가벼워짐.
@@ -215,6 +224,8 @@ class ArticleServiceTest {
         Article original = Article.of(userAccount, "title", "content", "#tag");
         ArticleDto updated = createArticleDto("newtitle", "newcontent", "#newtag");
         given(articleRepo.getReferenceById(updated.id())).willReturn(original);
+        given(userAccountRepo.getReferenceById(updated.userAccountDto().username()))
+            .willReturn(updated.userAccountDto().toEntity());
 
         // When try updating it
         sut.updateArticle(updated.id(), updated); // 시험 단계에서 original id 는 알 수 없고 null 이니, 정확한 아이디를 넣었다고 가정.
@@ -225,7 +236,7 @@ class ArticleServiceTest {
                 .hasFieldOrPropertyWithValue("content", updated.content())
                 .hasFieldOrPropertyWithValue("hashtag", updated.hashtag());
         then(articleRepo).should().getReferenceById(updated.id());
-        then(articleRepo).should().save(any(Article.class));
+        then(userAccountRepo).should().getReferenceById(updated.userAccountDto().username());
     }
 
     @DisplayName("없는 게시글 수정 시도 시, 경고 로그만 찍고 끝")
@@ -248,13 +259,14 @@ class ArticleServiceTest {
     void test_deletingArticle() {
         // Given article id
         long articleId = randNumb();
-        willDoNothing().given(articleRepo).deleteById(articleId);
+        String usrname = randString(3);
+        willDoNothing().given(articleRepo).deleteByIdAndUserAccount_Username(articleId, usrname);
 
         // When try deleting using that id
-        sut.deleteArticle(articleId);
+        sut.deleteArticle(articleId, usrname);
 
         // Then should delete it properly
-        then(articleRepo).should().deleteById(articleId);
+        then(articleRepo).should().deleteByIdAndUserAccount_Username(articleId, usrname);
     }
 
     @DisplayName("게시글 갯수 조회")

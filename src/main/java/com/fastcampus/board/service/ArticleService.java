@@ -50,22 +50,23 @@ public class ArticleService {
         // only title, content, hashtag can be modified
         try {
             Article article = articleRepository.getReferenceById(articleId);
-            if (dto.title() != null) {
-                article.setTitle(dto.title());
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().username());
+            if (article.getUserAccount().equals(userAccount)) {
+                if (dto.title() != null) {
+                    article.setTitle(dto.title());
+                }
+                if (dto.content() != null) {
+                    article.setContent(dto.content());
+                }
+                article.setHashtag(dto.hashtag());
             }
-            if (dto.content() != null) {
-                article.setContent(dto.content());
-            }
-            article.setHashtag(dto.hashtag());
-            articleRepository.save(article);
-
         } catch (EntityNotFoundException e) {
-            log.warn("article update fail. cannot find that article - dto: {}", dto);
+            log.warn("게시글 업데이트 실패. 게시글을 수정하는데 필요한 정보를 찾을 수 없습니다 - {}", e.getLocalizedMessage());
         }
     }
 
-    public void deleteArticle(Long articleId) {
-        articleRepository.deleteById(articleId);
+    public void deleteArticle(Long articleId, String username) {
+        articleRepository.deleteByIdAndUserAccount_Username(articleId, username);
     }
 
     @Transactional(readOnly = true)

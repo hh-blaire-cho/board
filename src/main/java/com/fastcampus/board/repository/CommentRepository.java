@@ -4,13 +4,12 @@ import com.fastcampus.board.domain.Comment;
 import com.fastcampus.board.domain.QComment;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.StringExpression;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-
-import java.util.List;
 
 @RepositoryRestResource
 public interface CommentRepository extends
@@ -29,5 +28,7 @@ public interface CommentRepository extends
     }
 
     List<Comment> findByArticle_Id(Long articleId);
+
+    void deleteByIdAndUserAccount_Username(Long commentId, String username);
     
 }
