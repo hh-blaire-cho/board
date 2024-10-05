@@ -110,7 +110,7 @@ public class ArticleController {
         @PathVariable Long articleId,
         @AuthenticationPrincipal BoardPrincipal boardPrincipal
     ) {
-        articleService.deleteArticle(articleId);
+        articleService.deleteArticle(articleId, boardPrincipal.getUsername());
 
         return "redirect:/articles";
     }

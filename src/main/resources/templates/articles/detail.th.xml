@@ -6,13 +6,13 @@
 
   <attr sel="#article-main" th:object="${article}">
     <attr sel="#article-header/h1" th:text="*{title}"/>
-    <attr sel="#nickname" th:text="*{nickname}"/>
+    <attr sel="#author" th:text="'author: ' + *{username}"/>
     <attr sel="#email" th:text="*{email}"/>
     <attr sel="#created-at" th:datetime="*{createdAt}" th:text="*{#temporals.format(createdAt, 'yyyy-MM-dd HH:mm:ss')}"/>
     <attr sel="#hashtag" th:text="*{hashtag}"/>
     <attr sel="#article-content/pre" th:text="*{content}"/>
 
-    <attr sel="#article-buttons">
+    <attr sel="#article-buttons" th:if="${#authorization.expression('isAuthenticated()')} and *{username} == ${#authentication.name}">
       <attr sel="#delete-article-form" th:action="'/articles/' + *{id} + '/delete'" th:method="post">
         <attr sel="#update-article" th:href="'/articles/' + *{id} + '/form'" />
       </attr>
@@ -23,19 +23,21 @@
       <attr sel=".comment-textbox" th:name="content" />
     </attr>
 
-    <attr sel="#comments" th:remove="all-but-first">
+    <attr sel="#all-comments" th:remove="all-but-first">
       <attr sel=".parent-comment[0]" th:each=" comment : ${comments}">
         <attr sel=".comment-delete-form" th:action="'/comments/' + ${comment.id} + '/delete'" th:method="post">
-          <attr sel="div/strong" th:text="${comment.nickname}" />
+          <attr sel="div/strong" th:text="${comment.username}" />
           <attr sel="div/small/time" th:datetime="${comment.createdAt}" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm:ss')}" />
           <attr sel="div/p" th:text="${comment.content}" />
+          <attr sel="button" th:if="${#authorization.expression('isAuthenticated()')} and ${comment.username} == ${#authentication.name}" />
         </attr>
         <attr sel="ul" th:if="${comment.childComments.size() > 0}" th:remove="all-but-first">
           <attr sel=".child-comment[0]" th:each="childComment : ${comment.childComments}">
             <attr sel=".comment-delete-form" th:action="'/comments/' + ${childComment.id} + '/delete'" th:method="post">
-              <attr sel="div/strong" th:text="${childComment.nickname}" />
+              <attr sel="div/strong" th:text="${childComment.username}" />
               <attr sel="div/small/time" th:datetime="${childComment.createdAt}" th:text="${#temporals.format(childComment.createdAt, 'yyyy-MM-dd HH:mm:ss')}" />
               <attr sel="div/p" th:text="${childComment.content}" />
+              <attr sel="button" th:if="${#authorization.expression('isAuthenticated()')} and ${childComment.username} == ${#authentication.name}" />
             </attr>
           </attr>
         </attr>

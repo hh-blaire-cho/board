@@ -35,8 +35,10 @@ public interface ArticleRepository extends
 
     Page<Article> findByUserAccount_UsernameContaining(String username, Pageable pageable);
 
-    Page<Article> findByUserAccount_NicknameContaining(String nickname, Pageable pageable);
+    Page<Article> findByUserAccount_EmailContaining(String email, Pageable pageable);
 
     Page<Article> findByHashtag(String hashtag, Pageable pageable); //해쉬태그의 경우 완전 일치 검색 필요
+
+    void deleteByIdAndUserAccount_Username(Long articleId, String username);
 
 }

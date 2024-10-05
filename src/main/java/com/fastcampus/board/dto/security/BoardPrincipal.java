@@ -14,11 +14,11 @@ public record BoardPrincipal(
     String password,
     Collection<? extends GrantedAuthority> authorities,
     String email,
-    String nickname,
     String memo
 ) implements UserDetails {
 
-    public static BoardPrincipal of(String username, String password, String email, String nickname, String memo) {
+    public static BoardPrincipal of(String username, String password, String email, String memo) {
+
         Set<RoleType> roleTypes = Set.of(RoleType.USER);
 
         return new BoardPrincipal(
@@ -30,7 +30,6 @@ public record BoardPrincipal(
                 .collect(Collectors.toUnmodifiableSet())
             ,
             email,
-            nickname,
             memo
         );
     }
@@ -40,7 +39,6 @@ public record BoardPrincipal(
             dto.username(),
             dto.password(),
             dto.email(),
-            dto.nickname(),
             dto.memo()
         );
     }
@@ -50,7 +48,6 @@ public record BoardPrincipal(
             username,
             password,
             email,
-            nickname,
             memo
         );
     }

@@ -1,6 +1,7 @@
 package com.fastcampus.board.controller;
 
 import static com.fastcampus.board.TestHelper.randNumb;
+import static com.fastcampus.board.TestHelper.randString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -11,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import com.fastcampus.board.config.TestSecurityConfig;
+import com.fastcampus.board.TestSecurityConfig;
 import com.fastcampus.board.dto.CommentDto;
 import com.fastcampus.board.dto.request.CommentRequest;
 import com.fastcampus.board.service.CommentService;
@@ -89,7 +90,8 @@ class CommentControllerTest {
         // Given articleId and commentId
         long articleId = randNumb();
         long commentId = randNumb();
-        willDoNothing().given(commentService).deleteComment(commentId);
+        String username = randString(3);
+        willDoNothing().given(commentService).deleteComment(commentId, username);
 
         // When requesting
         // Then deleted that corresponding comment properly
@@ -102,7 +104,7 @@ class CommentControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/articles/" + articleId))
             .andExpect(redirectedUrl("/articles/" + articleId));
-        then(commentService).should().deleteComment(commentId);
+        then(commentService).should().deleteComment(commentId, username);
     }
 
 }

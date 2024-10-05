@@ -1,15 +1,14 @@
 package com.fastcampus.board;
 
+import static java.time.LocalDateTime.now;
+
 import com.fastcampus.board.dto.ArticleDto;
 import com.fastcampus.board.dto.ArticleWithCommentsDto;
 import com.fastcampus.board.dto.CommentDto;
 import com.fastcampus.board.dto.UserAccountDto;
-
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.Set;
-
-import static java.time.LocalDateTime.now;
 
 public class TestHelper {
 
@@ -19,7 +18,7 @@ public class TestHelper {
 
     //픽스쳐
     public static final UserAccountDto USER_ACCOUNT_DTO = UserAccountDto.of(
-            "hcho", "password", "hcho@mail.com", "winkyhcho", "This is memo",
+        "hcho", "password", "hcho@mail.com", "This is memo",
             now(), "hcho", now(), "hcho");
 
     public static ArticleDto createArticleDto(String title, String content, String hashtag) {

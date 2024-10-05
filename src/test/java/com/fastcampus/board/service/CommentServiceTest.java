@@ -1,5 +1,19 @@
 package com.fastcampus.board.service;
 
+import static com.fastcampus.board.TestHelper.USER_ACCOUNT_DTO;
+import static com.fastcampus.board.TestHelper.createCommentDto;
+import static com.fastcampus.board.TestHelper.randNumb;
+import static com.fastcampus.board.TestHelper.randString;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.never;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.BDDMockito.willDoNothing;
+
 import com.fastcampus.board.domain.Article;
 import com.fastcampus.board.domain.Comment;
 import com.fastcampus.board.domain.UserAccount;
@@ -8,6 +22,8 @@ import com.fastcampus.board.repository.ArticleRepository;
 import com.fastcampus.board.repository.CommentRepository;
 import com.fastcampus.board.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,15 +32,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.fastcampus.board.TestHelper.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.tuple;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
 
 
 @DisplayName("비즈니스 로직 - 댓글")
@@ -233,13 +240,14 @@ class CommentServiceTest {
     void test_deletingComment() {
         // Given Comment Id
         long commentId = randNumb();
-        willDoNothing().given(commentRepo).deleteById(commentId);
+        String username = randString(3);
+        willDoNothing().given(commentRepo).deleteByIdAndUserAccount_Username(commentId, username);
 
         // When try deleting using that id
-        sut.deleteComment(commentId);
+        sut.deleteComment(commentId, username);
 
         // Then deletes that properly
-        then(commentRepo).should().deleteById(commentId);
+        then(commentRepo).should().deleteByIdAndUserAccount_Username(commentId, username);
     }
 
 }

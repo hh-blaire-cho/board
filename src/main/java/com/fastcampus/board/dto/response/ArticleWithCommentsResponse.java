@@ -3,7 +3,6 @@ package com.fastcampus.board.dto.response;
 
 import com.fastcampus.board.dto.ArticleWithCommentsDto;
 import com.fastcampus.board.dto.CommentDto;
-
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Map;
@@ -19,37 +18,34 @@ public record ArticleWithCommentsResponse(
         String hashtag,
         LocalDateTime createdAt,
         String email,
-        String nickname,
+        String username,
         Set<CommentResponse> commentResponses
 ) {
 
     public static ArticleWithCommentsResponse of(
-            Long id,
-            String title,
-            String content,
-            String hashtag,
-            LocalDateTime createdAt,
-            String email,
-            String nickname,
-            Set<CommentResponse> commentResponses) {
-        return new ArticleWithCommentsResponse(id, title, content, hashtag, createdAt, email, nickname, commentResponses);
+        Long id,
+        String title,
+        String content,
+        String hashtag,
+        LocalDateTime createdAt,
+        String email,
+        String username,
+        Set<CommentResponse> commentResponses) {
+        return new ArticleWithCommentsResponse(id, title, content, hashtag, createdAt,
+            email, username, commentResponses);
     }
 
     public static ArticleWithCommentsResponse from(ArticleWithCommentsDto dto) {
-        String nickname = dto.userAccountDto().nickname();
-        if (nickname == null || nickname.isBlank()) {
-            nickname = dto.userAccountDto().username();
-        }
 
         return new ArticleWithCommentsResponse(
-                dto.id(),
-                dto.title(),
-                dto.content(),
-                dto.hashtag(),
-                dto.createdAt(),
-                dto.userAccountDto().email(),
-                nickname,
-                organizeChildComments(dto.commentDtos())
+            dto.id(),
+            dto.title(),
+            dto.content(),
+            dto.hashtag(),
+            dto.createdAt(),
+            dto.userAccountDto().email(),
+            dto.userAccountDto().username(),
+            organizeChildComments(dto.commentDtos())
         );
     }
 

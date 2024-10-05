@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import com.fastcampus.board.config.TestSecurityConfig;
+import com.fastcampus.board.TestSecurityConfig;
 import com.fastcampus.board.domain.constant.FormStatus;
 import com.fastcampus.board.domain.constant.SearchType;
 import com.fastcampus.board.dto.ArticleDto;
@@ -225,7 +225,7 @@ class ArticleControllerTest {
         // Given articleId
         long articleId = 1L;
         String username = "testUser";
-        willDoNothing().given(articleService).deleteArticle(articleId);
+        willDoNothing().given(articleService).deleteArticle(articleId, username);
 
         // When requesting
         // Then deleted that corresponding article properly
@@ -237,7 +237,7 @@ class ArticleControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/articles"))
             .andExpect(redirectedUrl("/articles"));
-        then(articleService).should().deleteArticle(articleId);
+        then(articleService).should().deleteArticle(articleId, username);
     }
 
     @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)

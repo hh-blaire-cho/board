@@ -3,9 +3,11 @@ package com.fastcampus.board.controller;
 
 import com.fastcampus.board.dto.UserAccountDto;
 import com.fastcampus.board.dto.request.CommentRequest;
+import com.fastcampus.board.dto.security.BoardPrincipal;
 import com.fastcampus.board.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +22,7 @@ public class CommentController {
 
     // TODO: 실제 인증 정보를 넣어줘야 한다.
     private final UserAccountDto temp_user_dto = UserAccountDto.of(
-            "iady7777", "pw", "hcho302@mail.com", "KOLALA", "memo", null, null, null, null
+        "iady7777", "pw", "hcho302@mail.com", "memo", null, null, null, null
     );
 
 
@@ -35,8 +37,11 @@ public class CommentController {
 
     @Operation(summary = "delete selected comment")
     @PostMapping("/{commentId}/delete")
-    public String deleteComment(@PathVariable Long commentId, Long articleId) {
-        commentService.deleteComment(commentId);
+    public String deleteComment(
+        @PathVariable Long commentId,
+        @AuthenticationPrincipal BoardPrincipal boardPrincipal,
+        Long articleId) {
+        commentService.deleteComment(commentId, boardPrincipal.getUsername());
 
         return "redirect:/articles/" + articleId;
     }

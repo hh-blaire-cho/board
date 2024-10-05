@@ -1,7 +1,6 @@
 package com.fastcampus.board.dto.response;
 
 import com.fastcampus.board.dto.ArticleDto;
-
 import java.time.LocalDateTime;
 
 public record ArticleResponse(
@@ -11,34 +10,29 @@ public record ArticleResponse(
         String hashtag,
         LocalDateTime createdAt,
         String email,
-        String nickname
+        String username
 ) {
 
     public static ArticleResponse of(
-            Long id,
-            String title,
-            String content,
-            String hashtag,
-            LocalDateTime createdAt,
-            String email,
-            String nickname) {
-        return new ArticleResponse(id, title, content, hashtag, createdAt, email, nickname);
+        Long id,
+        String title,
+        String content,
+        String hashtag,
+        LocalDateTime createdAt,
+        String email,
+        String username) {
+        return new ArticleResponse(id, title, content, hashtag, createdAt, email, username);
     }
 
     public static ArticleResponse from(ArticleDto dto) {
-        String nickname = dto.userAccountDto().nickname();
-        if (nickname == null || nickname.isBlank()) {
-            nickname = dto.userAccountDto().username();
-        }
-
         return new ArticleResponse(
-                dto.id(),
-                dto.title(),
-                dto.content(),
-                dto.hashtag(),
-                dto.createdAt(),
-                dto.userAccountDto().email(),
-                nickname
+            dto.id(),
+            dto.title(),
+            dto.content(),
+            dto.hashtag(),
+            dto.createdAt(),
+            dto.userAccountDto().email(),
+            dto.userAccountDto().username()
         );
     }
 
