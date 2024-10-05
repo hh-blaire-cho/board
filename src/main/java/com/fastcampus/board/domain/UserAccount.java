@@ -1,11 +1,14 @@
 package com.fastcampus.board.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.util.Objects;
 
 @Getter
 @ToString
@@ -30,28 +33,21 @@ public class UserAccount extends AuditingFields {
     private String email;
 
     @Setter
-    @Column(length = 100)
-    private String nickname;
-
-    @Setter
     private String memo;
 
 
     protected UserAccount() {
     }
 
-    private UserAccount(String username, String password, String email, String nickname,
-        String memo) {
+    private UserAccount(String username, String password, String email, String memo) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.nickname = nickname;
         this.memo = memo;
     }
 
-    public static UserAccount of(String userId, String userPassword, String email, String nickname,
-        String memo) {
-        return new UserAccount(userId, userPassword, email, nickname, memo);
+    public static UserAccount of(String username, String password, String email, String memo) {
+        return new UserAccount(username, password, email, memo);
     }
 
     @Override

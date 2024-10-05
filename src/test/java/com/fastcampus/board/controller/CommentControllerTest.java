@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import com.fastcampus.board.config.TestSecurityConfig;
+import com.fastcampus.board.TestSecurityConfig;
 import com.fastcampus.board.dto.CommentDto;
 import com.fastcampus.board.dto.request.CommentRequest;
 import com.fastcampus.board.service.CommentService;

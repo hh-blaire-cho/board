@@ -144,7 +144,7 @@ class ArticleServiceTest {
 
         verify(articleRepo, never()).findByContentContaining(any(), any());
         verify(articleRepo, never()).findByUserAccount_UsernameContaining(any(), any());
-        verify(articleRepo, never()).findByUserAccount_NicknameContaining(any(), any());
+        verify(articleRepo, never()).findByUserAccount_EmailContaining(any(), any());
         verify(articleRepo, never()).findByHashtag(any(), any());
         then(articleRepo).should().findByTitleContaining(any(), any());
     }
@@ -167,7 +167,7 @@ class ArticleServiceTest {
         verify(articleRepo, never()).findByTitleContaining(any(), any());
         verify(articleRepo, never()).findByContentContaining(any(), any());
         verify(articleRepo, never()).findByUserAccount_UsernameContaining(any(), any());
-        verify(articleRepo, never()).findByUserAccount_NicknameContaining(any(), any());
+        verify(articleRepo, never()).findByUserAccount_EmailContaining(any(), any());
         verify(articleRepo, never()).findByHashtag(any(), any());
         then(articleRepo).should().findAll(pageable);
     }

@@ -1,8 +1,9 @@
-package com.fastcampus.board.config;
+package com.fastcampus.board;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
+import com.fastcampus.board.config.SecurityConfig;
 import com.fastcampus.board.domain.UserAccount;
 import com.fastcampus.board.repository.UserAccountRepository;
 import java.util.Optional;
@@ -23,7 +24,6 @@ public class TestSecurityConfig {
                 "testUser",
                 "qwerty",
                 "test@email.com",
-                "testNickname",
                 "testMemo"
             )));
     }

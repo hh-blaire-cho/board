@@ -1,14 +1,12 @@
 package com.fastcampus.board.dto;
 
 import com.fastcampus.board.domain.UserAccount;
-
 import java.time.LocalDateTime;
 
 public record UserAccountDto(
         String username,
         String password,
         String email,
-        String nickname,
         String memo,
         LocalDateTime createdAt,
         String createdBy,
@@ -20,23 +18,22 @@ public record UserAccountDto(
             String username,
             String password,
             String email,
-            String nickname,
             String memo,
             LocalDateTime createdAt,
             String createdBy,
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new UserAccountDto(username, password, email, nickname, memo, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new UserAccountDto(username, password, email, memo, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     public static UserAccountDto of(
             String username,
             String password,
             String email,
-            String nickname,
-            String memo) {
-        return new UserAccountDto(username, password, email, nickname, memo, null, null, null, null);
+        String memo
+    ) {
+        return new UserAccountDto(username, password, email, memo, null, null, null, null);
     }
 
     public static UserAccountDto from(UserAccount entity) {
@@ -44,7 +41,6 @@ public record UserAccountDto(
                 entity.getUsername(),
                 entity.getPassword(),
                 entity.getEmail(),
-                entity.getNickname(),
                 entity.getMemo(),
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),
@@ -58,7 +54,6 @@ public record UserAccountDto(
                 username,
                 password,
                 email,
-                nickname,
                 memo
         );
     }

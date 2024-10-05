@@ -20,7 +20,7 @@ public class CommentController {
 
     // TODO: 실제 인증 정보를 넣어줘야 한다.
     private final UserAccountDto temp_user_dto = UserAccountDto.of(
-            "iady7777", "pw", "hcho302@mail.com", "KOLALA", "memo", null, null, null, null
+        "iady7777", "pw", "hcho302@mail.com", "memo", null, null, null, null
     );
 
 
