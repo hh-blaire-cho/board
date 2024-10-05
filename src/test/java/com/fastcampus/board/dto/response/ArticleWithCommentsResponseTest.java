@@ -36,7 +36,7 @@ class ArticleWithCommentsResponseTest {
                 createCommentDto(7L, articleId, null, content, now.plusDays(2L)),
                 createCommentDto(8L, articleId, null, content, now.plusDays(7L))
         );
-        ArticleWithCommentsDto input = createArticleWithCommentsDto(1L, "", "", "", commentDtos);
+        ArticleWithCommentsDto input = createArticleWithCommentsDto(1L, "", "", "", commentDtos, Set.of());
 
         List<Long> actualIds = ArticleWithCommentsResponse.from(input).commentResponses().stream()
                 .map(CommentResponse::id).collect(Collectors.toList());
@@ -64,7 +64,7 @@ class ArticleWithCommentsResponseTest {
                 createCommentDto(8L, articleId, 6L, content, now.plusDays(7L))
         );
 
-        ArticleWithCommentsDto input = createArticleWithCommentsDto(1L, "", "", "", commentDtos);
+        ArticleWithCommentsDto input = createArticleWithCommentsDto(1L, "", "", "", commentDtos, Set.of());
 
         Set<CommentResponse> actual = ArticleWithCommentsResponse.from(input).commentResponses();
 
