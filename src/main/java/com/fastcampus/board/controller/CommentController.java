@@ -1,7 +1,6 @@
 package com.fastcampus.board.controller;
 
 
-import com.fastcampus.board.dto.UserAccountDto;
 import com.fastcampus.board.dto.request.CommentRequest;
 import com.fastcampus.board.dto.security.BoardPrincipal;
 import com.fastcampus.board.service.CommentService;
@@ -20,18 +19,10 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    // TODO: 실제 인증 정보를 넣어줘야 한다.
-    private final UserAccountDto temp_user_dto = UserAccountDto.of(
-        "iady7777", "pw", "hcho302@mail.com", "memo", null, null, null, null
-    );
-
-
     @Operation(summary = "create new comment")
     @PostMapping("/new")
-    public String postNewComment(CommentRequest commentRequest) {
-        // TODO: 인증 정보를 넣어줘야 한다.
-        commentService.saveComment(commentRequest.toDto(temp_user_dto));
-
+    public String postNewComment(@AuthenticationPrincipal BoardPrincipal auth, CommentRequest commentRequest) {
+        commentService.saveComment(commentRequest.toDto(auth.toDto()));
         return "redirect:/articles/" + commentRequest.articleId();
     }
 
@@ -46,4 +37,5 @@ public class CommentController {
         return "redirect:/articles/" + articleId;
     }
 
+    // TODO 댓글 업데이트
 }
