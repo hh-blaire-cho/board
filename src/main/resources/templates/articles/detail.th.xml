@@ -13,7 +13,7 @@
     <attr sel="#article-content/div" th:text="*{content}"/>
 
     <attr sel="#article-buttons" th:if="${#authorization.expression('isAuthenticated()')} and *{username} == ${#authentication.name}">
-      <attr sel="#delete-article-form" th:action="'/articles/' + *{id} + '/delete'" th:method="post">
+      <attr sel="#article-action-form" th:action="'/articles/' + *{id} + '/delete'" th:method="post">
         <attr sel="#update-article" th:href="'/articles/' + *{id} + '/form'" />
       </attr>
     </attr>
@@ -25,7 +25,7 @@
 
     <attr sel="#all-comments" th:remove="all-but-first">
       <attr sel=".parent-comment[0]" th:each=" comment : ${comments}">
-        <attr sel=".comment-delete-form" th:action="'/comments/' + ${comment.id} + '/delete'" th:method="post">
+        <attr sel=".comment-action-form" th:action="'/comments/' + ${comment.id} + '/delete'" th:method="post">
           <attr sel="div/strong" th:text="${comment.username}" />
           <attr sel="div/small/time" th:datetime="${comment.createdAt}" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm:ss')}" />
           <attr sel="div/p" th:text="${comment.content}" />
@@ -33,7 +33,7 @@
         </attr>
         <attr sel="ul" th:if="${comment.childComments.size() > 0}" th:remove="all-but-first">
           <attr sel=".child-comment[0]" th:each="childComment : ${comment.childComments}">
-            <attr sel=".comment-delete-form" th:action="'/comments/' + ${childComment.id} + '/delete'" th:method="post">
+            <attr sel=".childComment-action-form" th:action="'/comments/' + ${childComment.id} + '/delete'" th:method="post">
               <attr sel="div/strong" th:text="${childComment.username}" />
               <attr sel="div/small/time" th:datetime="${childComment.createdAt}" th:text="${#temporals.format(childComment.createdAt, 'yyyy-MM-dd HH:mm:ss')}" />
               <attr sel="div/p" th:text="${childComment.content}" />
