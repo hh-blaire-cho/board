@@ -28,11 +28,17 @@
 
     <attr sel="#all-comments" th:remove="all-but-first">
       <attr sel=".parent-comment[0]" th:each=" comment : ${comments}">
-        <attr sel=".comment-action-form" th:action="'/comments/' + ${comment.id} + '/delete'" th:method="post">
+        <attr sel=".comment-action-form">
           <attr sel="div/strong" th:text="${comment.username}" />
           <attr sel="div/small/time" th:datetime="${comment.createdAt}" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm:ss')}" />
+          <attr sel="div/span" th:text="'♥:'+${comment.likeCount}"/>
           <attr sel="div/p" th:text="${comment.content}" />
-          <attr sel="button" th:if="${#authorization.expression('isAuthenticated()')} and ${comment.username} == ${#authentication.name}" />
+          <attr sel="#comment-buttons">
+            <attr sel="#dummy" th:action="@{'/comments/' + ${comment.id} + '/like'}" th:method="post"/>
+            <attr sel="#like-comment-form" th:action="@{'/comments/' + ${comment.id} + '/like'}" th:method="post"/>
+            <attr sel="#delete-comment-form" th:action="@{'/comments/' + ${comment.id} + '/delete'}" th:method="post"
+              th:if="${#authorization.expression('isAuthenticated()')} and ${comment.username} == ${#authentication.name}"/>
+          </attr>
         </attr>
         <attr sel="ul" th:if="${comment.childComments.size() > 0}" th:remove="all-but-first">
           <attr sel=".child-comment[0]" th:each="childComment : ${comment.childComments}">
