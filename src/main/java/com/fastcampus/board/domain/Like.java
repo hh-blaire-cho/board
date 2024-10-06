@@ -37,7 +37,7 @@ public class Like {
 
     @Setter
     @JoinColumn(name = "comment_id")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Comment comment; // 댓글 (ID)
 
     @Column(name = "created_at")
