@@ -37,5 +37,15 @@ public class CommentController {
         return "redirect:/articles/" + articleId;
     }
 
+    // 좋아요 토글 기능
+    @PostMapping("/{commentId}/like")
+    public String toggleCommentLike(
+        @PathVariable Long commentId, Long articleId,
+        @AuthenticationPrincipal BoardPrincipal boardPrincipal
+    ) {
+        commentService.toggleLike(commentId, boardPrincipal.getUsername());
+        return "redirect:/articles/" + articleId;
+    }
+
     // TODO 댓글 업데이트
 }

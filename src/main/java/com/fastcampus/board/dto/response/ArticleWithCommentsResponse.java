@@ -19,6 +19,7 @@ public record ArticleWithCommentsResponse(
         LocalDateTime createdAt,
         String email,
         String username,
+        int likeCount,
         Set<CommentResponse> commentResponses
 ) {
 
@@ -30,9 +31,11 @@ public record ArticleWithCommentsResponse(
         LocalDateTime createdAt,
         String email,
         String username,
-        Set<CommentResponse> commentResponses) {
+        int likeCount,
+        Set<CommentResponse> commentResponses
+    ) {
         return new ArticleWithCommentsResponse(id, title, content, hashtag, createdAt,
-            email, username, commentResponses);
+            email, username, likeCount, commentResponses);
     }
 
     public static ArticleWithCommentsResponse from(ArticleWithCommentsDto dto) {
@@ -45,13 +48,14 @@ public record ArticleWithCommentsResponse(
             dto.createdAt(),
             dto.userAccountDto().email(),
             dto.userAccountDto().username(),
+            dto.likeDtos().size(),
             organizeChildComments(dto.commentDtos())
         );
     }
 
     private static Set<CommentResponse> organizeChildComments(Set<CommentDto> dtos) {
         Map<Long, CommentResponse> map = dtos.stream().map(CommentResponse::from)
-                .collect(Collectors.toMap(CommentResponse::id, Function.identity()));
+            .collect(Collectors.toMap(CommentResponse::id, Function.identity()));
 
         map.values().stream().filter(CommentResponse::hasParentComment).forEach(x -> {
             CommentResponse parent = map.get(x.parentCommentId());
@@ -59,11 +63,11 @@ public record ArticleWithCommentsResponse(
         });
 
         Comparator<CommentResponse> childCommentComparator = Comparator
-                .comparing(CommentResponse::createdAt).reversed() // 최신순 정렬
-                .thenComparingLong(CommentResponse::id); // 혹시 모르니까 아이디 대소비교로 마무리
+            .comparing(CommentResponse::createdAt).reversed() // 최신순 정렬
+            .thenComparingLong(CommentResponse::id); // 혹시 모르니까 아이디 대소비교로 마무리
 
         return map.values().stream().filter(x -> !x.hasParentComment())
-                .collect(Collectors.toCollection(() -> new TreeSet<>(childCommentComparator)));
+            .collect(Collectors.toCollection(() -> new TreeSet<>(childCommentComparator)));
     }
 
 }

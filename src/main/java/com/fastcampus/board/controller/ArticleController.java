@@ -115,4 +115,13 @@ public class ArticleController {
         return "redirect:/articles";
     }
 
+    // 좋아요 토글 기능
+    @PostMapping("/{articleId}/like")
+    public String toggleArticleLike(
+        @PathVariable Long articleId,
+        @AuthenticationPrincipal BoardPrincipal boardPrincipal
+    ) {
+        articleService.toggleLike(articleId, boardPrincipal.getUsername());
+        return "redirect:/articles/" + articleId;
+    }
 }

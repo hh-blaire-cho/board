@@ -29,6 +29,7 @@
         <p><a id="email" href="mailto:jchoi@mail.com">jchoi@mail.com</a></p>
         <p><time id="created-at" datetime="2024-03-01T00:00:00">2024-03-01</time></p>
         <p><span id="hashtag">#naruto</span></p>
+        <p><span id="articleLikeCount">♥좋아요: 15</span></p>
       </aside>
     </section>
     <article class="col-md-7 col-lg-8 content" id="article-content">
@@ -42,12 +43,13 @@
     </article>
   </div>
   <!--게시글 버튼들-->
-  <div class="row g-5" id="article-buttons">
-    <form id="article-action-form">
-      <div class="pb-5 d-grid gap-2 d-md-block">
-        <a class="btn btn-success me-md-2" role="button" id="update-article">수정</a>
-        <button class="btn btn-danger me-md-2" type="submit">삭제</button>
-      </div>
+  <div class="pb-5 d-flex gap-2" id="article-buttons">
+    <form id="like-article-form" method="post">
+      <button class="btn btn-warning" type="submit" id="like-article">♥</span></button>
+    </form>
+    <a id="update-article" class="btn btn-success me-md-2" role="button">수정</a>
+    <form id="delete-article-form" method="post">
+      <button class="btn btn-danger me-md-2" type="submit" id="delete-article">삭제</button>
     </form>
   </div>
 
@@ -74,10 +76,22 @@
               <div class="col-md-10 col-lg-9">
                 <strong>default-user1</strong>
                 <small><time>1995-11-19</time></small>
+                <span>♥:77</span>
                 <p class="mb-1">random-default-comment1</p>
               </div>
-              <div class="col-2 mb-3">
-                <button type="submit" class="btn btn-outline-danger">댓글삭제</button>
+              <div class="pb-5 d-flex gap-2" id="comment-buttons">
+                <form id="dummy" method="post">
+                  <input type="hidden" name="articleId" th:value="${articleId}"/>
+                  <button class="btn btn-light" type="submit" id="dum-comment">.</button>
+                </form>
+                <form id="like-comment-form" method="post">
+                  <input type="hidden" name="articleId" th:value="${articleId}"/>
+                  <button class="btn btn-warning" type="submit" id="like-comment">♥</button>
+                </form>
+                <form id="delete-comment-form" method="post">
+                  <input type="hidden" name="articleId" th:value="${articleId}"/>
+                  <button class="btn btn-danger me-md-2" type="submit" id="delete-comment">댓글삭제</button>
+                </form>
               </div>
             </div>
           </form>
@@ -89,10 +103,22 @@
                   <div class="col-md-10 col-lg-9">
                     <strong>random-user2</strong>
                     <small><time>1995-11-20</time></small>
+                    <span>♥:45</span>
                     <p class="mb-1">random-default-comment2</p>
                   </div>
-                  <div class="col-2 mb-3 align-self-center">
-                    <button type="submit" class="btn btn-outline-danger">대댓삭제</button>
+                  <div class="pb-5 d-flex gap-2" id="child-comment-buttons">
+                    <form id="child-dummy" method="post">
+                      <input type="hidden" name="articleId" th:value="${articleId}"/>
+                      <button class="btn btn-light" type="submit" id="child-dum-comment">.</button>
+                    </form>
+                    <form id="child-like-comment-form" method="post">
+                      <input type="hidden" name="articleId" th:value="${articleId}"/>
+                      <button class="btn btn-warning" type="submit" id="child-like-comment">♥</button>
+                    </form>
+                    <form id="child-delete-comment-form" method="post">
+                      <input type="hidden" name="articleId" th:value="${articleId}"/>
+                      <button class="btn btn-danger me-md-2" type="submit" id="child-delete-comment">댓글삭제</button>
+                    </form>
                   </div>
                 </div>
               </form>

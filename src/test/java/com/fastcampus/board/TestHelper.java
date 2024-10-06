@@ -5,6 +5,7 @@ import static java.time.LocalDateTime.now;
 import com.fastcampus.board.dto.ArticleDto;
 import com.fastcampus.board.dto.ArticleWithCommentsDto;
 import com.fastcampus.board.dto.CommentDto;
+import com.fastcampus.board.dto.LikeDto;
 import com.fastcampus.board.dto.UserAccountDto;
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -31,7 +32,7 @@ public class TestHelper {
     }
 
     public static CommentDto createCommentDto(Long itsId, Long articleId, Long parentId, String content, LocalDateTime createTime) {
-        return CommentDto.of(itsId, articleId, parentId, USER_ACCOUNT_DTO, content,
+        return CommentDto.of(itsId, articleId, parentId, USER_ACCOUNT_DTO, Set.of(), content,
                 createTime, randString(5), now(), randString(5));
     }
 
@@ -44,11 +45,13 @@ public class TestHelper {
     }
 
     public static ArticleWithCommentsDto createArticleWithCommentsDto() {
-        return createArticleWithCommentsDto(randNumb(), randString(5), randString(5), randString(5), Set.of());
+        return createArticleWithCommentsDto(randNumb(), randString(5), randString(5), randString(5), Set.of(), Set.of());
     }
 
-    public static ArticleWithCommentsDto createArticleWithCommentsDto(Long id, String title, String content, String hashtag, Set<CommentDto> dtos) {
-        return ArticleWithCommentsDto.of(id, USER_ACCOUNT_DTO, dtos, title, content, hashtag,
+    public static ArticleWithCommentsDto createArticleWithCommentsDto(Long id, String title, String content, String hashtag,
+        Set<CommentDto> comments, Set<LikeDto> likes
+    ) {
+        return ArticleWithCommentsDto.of(id, USER_ACCOUNT_DTO, comments, likes, title, content, hashtag,
                 now(), randString(5), now(), randString(5));
     }
 

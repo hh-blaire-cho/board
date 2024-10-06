@@ -7,13 +7,14 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public record CommentResponse(
-        Long id,
-        Long parentCommentId,
-        String content,
-        LocalDateTime createdAt,
-        String email,
-        String username,
-        Set<CommentResponse> childComments
+    Long id,
+    Long parentCommentId,
+    String content,
+    LocalDateTime createdAt,
+    String email,
+    String username,
+    int likeCount,
+    Set<CommentResponse> childComments
 ) {
 
     public static CommentResponse of(
@@ -22,14 +23,15 @@ public record CommentResponse(
         String content,
         LocalDateTime createdAt,
         String email,
-        String username
+        String username,
+        int likeCount
     ) {
 
         Comparator<CommentResponse> childCommentComparator = Comparator
-                .comparing(CommentResponse::createdAt)
-                .thenComparingLong(CommentResponse::id); // 혹시 모르니까 아이디 대소비교로 마무리
+            .comparing(CommentResponse::createdAt)
+            .thenComparingLong(CommentResponse::id); // 혹시 모르니까 아이디 대소비교로 마무리
 
-        return new CommentResponse(id, parentCommentId, content, createdAt, email, username,
+        return new CommentResponse(id, parentCommentId, content, createdAt, email, username, likeCount,
             new TreeSet<>(childCommentComparator));
     }
 
@@ -40,7 +42,8 @@ public record CommentResponse(
             dto.content(),
             dto.createdAt(),
             dto.userAccountDto().email(),
-            dto.userAccountDto().username()
+            dto.userAccountDto().username(),
+            dto.likesDtos().size()
         );
     }
 

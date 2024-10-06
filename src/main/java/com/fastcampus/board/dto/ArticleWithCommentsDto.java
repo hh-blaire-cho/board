@@ -10,6 +10,7 @@ public record ArticleWithCommentsDto(
         Long id,
         UserAccountDto userAccountDto,
         Set<CommentDto> commentDtos,
+        Set<LikeDto> likeDtos,
         String title,
         String content,
         String hashtag,
@@ -22,7 +23,8 @@ public record ArticleWithCommentsDto(
     public static ArticleWithCommentsDto of(
             Long id,
             UserAccountDto userAccountDto,
-            Set<CommentDto> commentDtos, // ArticleDto 와의 차별화
+            Set<CommentDto> commentDtos,
+            Set<LikeDto> likeDtos,
             String title,
             String content,
             String hashtag,
@@ -31,7 +33,8 @@ public record ArticleWithCommentsDto(
             LocalDateTime modifiedAt,
             String modifiedBy
     ) {
-        return new ArticleWithCommentsDto(id, userAccountDto, commentDtos, title, content, hashtag, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new ArticleWithCommentsDto(id, userAccountDto, commentDtos, likeDtos,
+            title, content, hashtag, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     public static ArticleWithCommentsDto from(Article entity) {
@@ -41,6 +44,9 @@ public record ArticleWithCommentsDto(
                 entity.getComments().stream()
                         .map(CommentDto::from)
                         .collect(Collectors.toCollection(LinkedHashSet::new)),
+                entity.getLikes().stream()
+                    .map(LikeDto::from)
+                    .collect(Collectors.toCollection(LinkedHashSet::new)),
                 entity.getTitle(),
                 entity.getContent(),
                 entity.getHashtag(),
