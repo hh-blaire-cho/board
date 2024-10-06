@@ -1,10 +1,10 @@
 package com.fastcampus.board.controller;
 
 import static com.fastcampus.board.TestHelper.randNumb;
-import static com.fastcampus.board.TestHelper.randString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -90,8 +90,6 @@ class CommentControllerTest {
         // Given articleId and commentId
         long articleId = randNumb();
         long commentId = randNumb();
-        String username = randString(3);
-        willDoNothing().given(commentService).deleteComment(commentId, username);
 
         // When requesting
         // Then deleted that corresponding comment properly
@@ -104,7 +102,30 @@ class CommentControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/articles/" + articleId))
             .andExpect(redirectedUrl("/articles/" + articleId));
-        then(commentService).should().deleteComment(commentId, username);
+        then(commentService).should().deleteComment(commentId, "testUser");
     }
 
+    @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("[view][POST] 댓글 삭제 - 사용자 다름")
+    @Test
+    void test_deleteComment_anotherAuthor() throws Exception {
+        // Given articleId and commentId
+        long articleId = randNumb();
+        long commentId = randNumb();
+
+        // When requesting
+        // Then deleted that corresponding comment properly
+        mvc.perform(
+                post("/comments/" + commentId + "/delete")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .content(formDataEncoder.encode(Map.of("articleId", articleId)))
+                    .with(csrf())
+            )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/articles/" + articleId))
+            .andExpect(redirectedUrl("/articles/" + articleId));
+        then(commentService).should(never()).deleteComment(commentId, "wrongUser");
+    }
+
+    // TODO 댓글 업데이트
 }
