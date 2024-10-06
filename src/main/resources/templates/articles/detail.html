@@ -103,10 +103,22 @@
                   <div class="col-md-10 col-lg-9">
                     <strong>random-user2</strong>
                     <small><time>1995-11-20</time></small>
+                    <span>♥:45</span>
                     <p class="mb-1">random-default-comment2</p>
                   </div>
-                  <div class="col-2 mb-3 align-self-center">
-                    <button type="submit" class="btn btn-outline-danger">대댓삭제</button>
+                  <div class="pb-5 d-flex gap-2" id="child-comment-buttons">
+                    <form id="child-dummy" method="post">
+                      <input type="hidden" name="articleId" th:value="${articleId}"/>
+                      <button class="btn btn-light" type="submit" id="child-dum-comment">.</button>
+                    </form>
+                    <form id="child-like-comment-form" method="post">
+                      <input type="hidden" name="articleId" th:value="${articleId}"/>
+                      <button class="btn btn-warning" type="submit" id="child-like-comment">♥</button>
+                    </form>
+                    <form id="child-delete-comment-form" method="post">
+                      <input type="hidden" name="articleId" th:value="${articleId}"/>
+                      <button class="btn btn-danger me-md-2" type="submit" id="child-delete-comment">댓글삭제</button>
+                    </form>
                   </div>
                 </div>
               </form>
