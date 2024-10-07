@@ -73,9 +73,10 @@ public class CommentService {
         }
     }
 
-    public void updateComment(CommentDto dto) {
+    // 최초 생성할 때엔, id가 순차적으로 알아서 생겨 필요없지만, 수정할 때엔 필요 dto가 id가 없을 수도 있는 유연한 상황 고려
+    public void updateComment(Long commentId, CommentDto dto) {
         try {
-            Comment comment = commentRepository.getReferenceById(dto.id());
+            Comment comment = commentRepository.getReferenceById(commentId);
             if (dto.content() != null) {
                 comment.setContent(dto.content());
             }

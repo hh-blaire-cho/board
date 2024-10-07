@@ -213,7 +213,7 @@ class CommentServiceTest {
         given(commentRepo.getReferenceById(updated.id())).willReturn(original);
 
         // When try updating
-        sut.updateComment(updated);
+        sut.updateComment(updated.id(), updated);
 
         // Then saves that properly
         then(commentRepo).should().getReferenceById(updated.id());
@@ -228,7 +228,7 @@ class CommentServiceTest {
         given(commentRepo.getReferenceById(updated.id())).willThrow(EntityNotFoundException.class);
 
         // When try updating it
-        sut.updateComment(updated);
+        sut.updateComment(updated.id(), updated);
 
         // Then should NOT update it but just logging warning
         then(commentRepo).should().getReferenceById(updated.id());
