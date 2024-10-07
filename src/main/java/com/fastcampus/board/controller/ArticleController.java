@@ -67,7 +67,7 @@ public class ArticleController {
     @Operation(summary = "display new article writing form")
     @GetMapping("/form")
     public String articleForm(ModelMap map) {
-        map.addAttribute("formStatus", FormStatus.CREATE);
+        map.addAttribute("formStatus", FormStatus.ARTICLE_CREATE);
 
         return "articles/form";
     }
@@ -88,7 +88,7 @@ public class ArticleController {
     public String updateArticleForm(@PathVariable Long articleId, ModelMap map) {
         ArticleResponse article = ArticleResponse.from(articleService.getArticle(articleId));
         map.addAttribute("article", article);
-        map.addAttribute("formStatus", FormStatus.UPDATE);
+        map.addAttribute("formStatus", FormStatus.ARTICLE_UPDATE);
         return "articles/form";
     }
 

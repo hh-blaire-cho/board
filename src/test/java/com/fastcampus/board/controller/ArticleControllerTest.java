@@ -252,7 +252,7 @@ class ArticleControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
             .andExpect(view().name("articles/form"))
-            .andExpect(model().attribute("formStatus", FormStatus.CREATE));
+            .andExpect(model().attribute("formStatus", FormStatus.ARTICLE_CREATE));
     }
 
     @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
@@ -273,7 +273,7 @@ class ArticleControllerTest {
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
             .andExpect(view().name("articles/form"))
             .andExpect(model().attribute("article", ArticleResponse.from(dto)))
-            .andExpect(model().attribute("formStatus", FormStatus.UPDATE));
+            .andExpect(model().attribute("formStatus", FormStatus.ARTICLE_UPDATE));
         then(articleService).should().getArticle(articleId);
     }
 
