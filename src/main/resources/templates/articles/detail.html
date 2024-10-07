@@ -88,6 +88,10 @@
                   <input type="hidden" name="articleId" th:value="${articleId}"/>
                   <button class="btn btn-warning" type="submit" id="like-comment">♥</button>
                 </form>
+                <form id="update-comment-form" method="get">
+                  <input type="hidden" name="articleId" th:value="${articleId}"/>
+                  <button class="btn btn-success" type="submit" id="update-comment">수정</button>
+                </form>
                 <form id="delete-comment-form" method="post">
                   <input type="hidden" name="articleId" th:value="${articleId}"/>
                   <button class="btn btn-danger me-md-2" type="submit" id="delete-comment">댓글삭제</button>
@@ -114,6 +118,10 @@
                     <form id="child-like-comment-form" method="post">
                       <input type="hidden" name="articleId" th:value="${articleId}"/>
                       <button class="btn btn-warning" type="submit" id="child-like-comment">♥</button>
+                    </form>
+                    <form id="child-update-comment-form" method="get">
+                      <input type="hidden" name="articleId" th:value="${articleId}"/>
+                      <button class="btn btn-success" type="submit" id="child-update-comment">수정</button>
                     </form>
                     <form id="child-delete-comment-form" method="post">
                       <input type="hidden" name="articleId" th:value="${articleId}"/>

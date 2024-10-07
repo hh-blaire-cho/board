@@ -36,6 +36,8 @@
           <attr sel="#comment-buttons">
             <attr sel="#dummy" th:action="@{'/comments/' + ${comment.id} + '/like'}" th:method="post"/>
             <attr sel="#like-comment-form" th:action="@{'/comments/' + ${comment.id} + '/like'}" th:method="post"/>
+            <attr sel="#update-comment-form" th:action="@{'/comments/' + ${comment.id} + '/form'}" th:method="get"
+              th:if="${#authorization.expression('isAuthenticated()')} and ${comment.username} == ${#authentication.name}"/>
             <attr sel="#delete-comment-form" th:action="@{'/comments/' + ${comment.id} + '/delete'}" th:method="post"
               th:if="${#authorization.expression('isAuthenticated()')} and ${comment.username} == ${#authentication.name}"/>
           </attr>
@@ -50,6 +52,8 @@
               <attr sel="#child-comment-buttons">
                 <attr sel="#child-dummy" th:action="@{'/comments/' + ${childComment.id} + '/like'}" th:method="post"/>
                 <attr sel="#child-like-comment-form" th:action="@{'/comments/' + ${childComment.id} + '/like'}" th:method="post"/>
+                <attr sel="#child-update-comment-form" th:action="@{'/comments/' + ${childComment.id} + '/form'}" th:method="get"
+                  th:if="${#authorization.expression('isAuthenticated()')} and ${childComment.username} == ${#authentication.name}"/>
                 <attr sel="#child-delete-comment-form" th:action="@{'/comments/' + ${childComment.id} + '/delete'}" th:method="post"
                   th:if="${#authorization.expression('isAuthenticated()')} and ${childComment.username} == ${#authentication.name}"/>
               </attr>
