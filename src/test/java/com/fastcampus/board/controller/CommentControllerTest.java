@@ -1,20 +1,28 @@
 package com.fastcampus.board.controller;
 
+import static com.fastcampus.board.TestHelper.createCommentDto;
 import static com.fastcampus.board.TestHelper.randNumb;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import com.fastcampus.board.TestSecurityConfig;
+import com.fastcampus.board.domain.constant.FormStatus;
 import com.fastcampus.board.dto.CommentDto;
 import com.fastcampus.board.dto.request.CommentRequest;
+import com.fastcampus.board.dto.response.CommentResponse;
 import com.fastcampus.board.service.CommentService;
 import com.fastcampus.board.util.FormDataEncoder;
 import java.util.Map;
@@ -81,6 +89,54 @@ class CommentControllerTest {
             .andExpect(redirectedUrl("/articles/" + articleId));
 
         then(commentService).should(times(2)).saveComment(any(CommentDto.class));
+    }
+
+    @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("[view][GET] 댓글 수정 페이지")
+    @Test
+    void test_openingCommentUpdatePage() throws Exception {
+        // Given nothing
+        // When requesting the page of modifying comment
+        // Then returns that page properly
+
+        long commentId = randNumb();
+        CommentDto dto = createCommentDto();
+        given(commentService.getComment(commentId)).willReturn(dto);
+
+        // When & Then
+        mvc.perform(get("/comments/" + commentId + "/form"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+            .andExpect(view().name("articles/form"))
+            .andExpect(model().attribute("comment", CommentResponse.from(dto)))
+            .andExpect(model().attribute("formStatus", FormStatus.COMMENT_UPDATE));
+        then(commentService).should().getComment(commentId);
+    }
+
+    @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("[view][POST] 댓글 수정 - 정상 호출")
+    @Test
+    void test_updatingComment() throws Exception {
+        long articleId = randNumb();
+        long commentId = randNumb();
+        long parentCommentId = randNumb();
+        CommentDto dto = createCommentDto();
+        CommentRequest commentRequest = CommentRequest.of(articleId, parentCommentId, "content");
+        willDoNothing().given(commentService).updateComment(eq(commentId), any(CommentDto.class));
+
+        // When requesting
+        // Then updates the article properly
+        mvc.perform(
+                post("/comments/" + commentId + "/form")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .content(formDataEncoder.encode(commentRequest))
+                    .with(csrf())
+            )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/articles/" + articleId))
+            .andExpect(redirectedUrl("/articles/" + articleId));
+
+        then(commentService).should().updateComment(eq(commentId), any(CommentDto.class));
     }
 
     @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
